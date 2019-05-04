@@ -1,11 +1,13 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy
-import DataNormalisation as dt
-import kmean as km
+import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 
-import numpy as np
+import kmean as km
+import CSVReader as cr
+import DataNormalisation as dt
+
 
 MAX_ITERATIONS = 100
 
@@ -100,16 +102,16 @@ MAX_ITERATIONS = 100
 ################################################               #############################################
 ################################################ READ CSV FILE #############################################
 ################################################               #############################################
-def load_csv_and_extract_feature(fileName, indexs, label):
-    with open(fileName) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        line_count = 0
-        data = []
-        for row in csv_reader:
-            if line_count != 0:
-                data.append([float(row[i]) for i in indexs])
-            line_count += 1
-        return data
+# def load_csv_and_extract_feature(fileName, indexs, label):
+#     with open(fileName) as csv_file:
+#         csv_reader = csv.reader(csv_file, delimiter=',')
+#         line_count = 0
+#         data = []
+#         for row in csv_reader:
+#             if line_count != 0:
+#                 data.append([float(row[i]) for i in indexs])
+#             line_count += 1
+#         return data
 
 
 ############################################################################################################
@@ -119,8 +121,10 @@ filePathLocal = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\csv\\brute
 
 features = [9, 10, 13, 14]
 
-dataFromRusia = load_csv_and_extract_feature(filePathRusia, features, "RUSIA")
-dataFromLocal = load_csv_and_extract_feature(filePathLocal, features, "LOCAL")
+csvReader = cr.CSVReader()
+
+dataFromRusia = csvReader.load_csv_and_extract_feature(filePathRusia, features, "RUSIA")
+dataFromLocal = csvReader.load_csv_and_extract_feature(filePathLocal, features, "LOCAL")
 
 dataFromRusia = np.array(dataFromRusia)
 dataFromLocal = np.array(dataFromLocal)
