@@ -1,8 +1,8 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy
-from scipy import stats
-import DataNormalisation.DataNormalisation as dt
+import DataNormalisation as dt
+import kmean as km
 from mpl_toolkits.mplot3d import Axes3D
 
 import numpy as np
@@ -14,68 +14,68 @@ MAX_ITERATIONS = 100
 #################################### K-means ###############################################################
 ####################################         ###############################################################
 
-
-def update_centroids(centroids, clusters):
-    assert (len(centroids) == len(clusters))
-    clusters = np.array(clusters)
-    for i, cluster in enumerate(clusters):
-        centroids[i] = sum(cluster) / len(cluster)
-    return centroids
-
-
-def check_converge(centroids, old_centroids, num_iterations, threshold=0):
-    if num_iterations > MAX_ITERATIONS:
-        return True
-    distances_between_new_and_old_centroids = np.array(
-        [euclidean_distance(n, o) for n, o in zip(centroids, old_centroids)])
-    if (distances_between_new_and_old_centroids <= threshold).all():
-        return True
-    return False
-
-
-def randomize_centroids(data, k):
-    indices = np.arange(len(data))  # generate a list from 0 to len(data)-1
-    np.random.shuffle(indices)  # shuffle the obtained list
-    random_indices = indices[:k]  # extact only first k indices
-    centroids = [data[i] for i in range(len(data)) if
-                 i in random_indices]  # todo  check if works with for i in random_indices
-    return centroids
-
-
-def kmeans(data, k=2, centroids=None):
-    data = np.array(data)
-    if not centroids:
-        centroids = randomize_centroids(data, k)
-
-    old_centroids = centroids[:]
-
-    iterations = 0
-
-    while True:
-        iterations += 1
-
-        clusters = [[] for i in range(k)]
-
-        for datapoint in data:
-            centroid_index = find_closest_centroid_index(datapoint, centroids)
-            clusters[centroid_index].append(datapoint)
-
-        old_centroids = centroids[:]
-
-        centroids = update_centroids(centroids, clusters)
-
-        if check_converge(centroids, old_centroids, iterations):
-            break
-
-    return centroids
-
-
-def euclidean_distance(p1, p2):
-    return np.sqrt(np.sum([(c1 - c2) ** 2 for c1, c2 in zip(p1, p2)]))
-
-
-def find_closest_centroid_index(datapoint, centroids):
-    return min(enumerate(centroids), key=lambda x: euclidean_distance(datapoint, x[1]))[0]
+#
+# def update_centroids(centroids, clusters):
+#     assert (len(centroids) == len(clusters))
+#     clusters = np.array(clusters)
+#     for i, cluster in enumerate(clusters):
+#         centroids[i] = sum(cluster) / len(cluster)
+#     return centroids
+#
+#
+# def check_converge(centroids, old_centroids, num_iterations, threshold=0):
+#     if num_iterations > MAX_ITERATIONS:
+#         return True
+#     distances_between_new_and_old_centroids = np.array(
+#         [euclidean_distance(n, o) for n, o in zip(centroids, old_centroids)])
+#     if (distances_between_new_and_old_centroids <= threshold).all():
+#         return True
+#     return False
+#
+#
+# def randomize_centroids(data, k):
+#     indices = np.arange(len(data))  # generate a list from 0 to len(data)-1
+#     np.random.shuffle(indices)  # shuffle the obtained list
+#     random_indices = indices[:k]  # extact only first k indices
+#     centroids = [data[i] for i in range(len(data)) if
+#                  i in random_indices]  # todo  check if works with for i in random_indices
+#     return centroids
+#
+#
+# def kmeans(data, k=2, centroids=None):
+#     data = np.array(data)
+#     if not centroids:
+#         centroids = randomize_centroids(data, k)
+#
+#     old_centroids = centroids[:]
+#
+#     iterations = 0
+#
+#     while True:
+#         iterations += 1
+#
+#         clusters = [[] for i in range(k)]
+#
+#         for datapoint in data:
+#             centroid_index = find_closest_centroid_index(datapoint, centroids)
+#             clusters[centroid_index].append(datapoint)
+#
+#         old_centroids = centroids[:]
+#
+#         centroids = update_centroids(centroids, clusters)
+#
+#         if check_converge(centroids, old_centroids, iterations):
+#             break
+#
+#     return centroids
+#
+#
+# def euclidean_distance(p1, p2):
+#     return np.sqrt(np.sum([(c1 - c2) ** 2 for c1, c2 in zip(p1, p2)]))
+#
+#
+# def find_closest_centroid_index(datapoint, centroids):
+#     return min(enumerate(centroids), key=lambda x: euclidean_distance(datapoint, x[1]))[0]
 
 
 ####################################                    ####################################################
@@ -182,8 +182,13 @@ k_data, mean, std = dt.DataNormalisation.normalise_data_set(k_data)
 print("k-data")
 print(k_data)
 
-centers = kmeans(k_data, k=2)
-labels = [find_closest_centroid_index(p, centers) for p in k_data]
+kmean = km.Kmean()
+
+centers = kmean.kmeans(k_data, k=2)
+labels = kmean.get_labels(k_data, centers)
+
+# centers = kmeans(k_data, k=2)
+# labels = [find_closest_centroid_index(p, centers) for p in k_data]
 fig = plt.figure(1, figsize=(8, 8))
 plt.clf()
 ax = Axes3D(fig, rect=[0, 0, 1, 1], elev=8, azim=200)
