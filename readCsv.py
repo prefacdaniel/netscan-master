@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import numpy
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
-
+from sklearn.cluster import KMeans
+from pandas import DataFrame
 import kmean as km
 import CSVReader as cr
 import DataNormalisation as dt
@@ -12,110 +13,6 @@ import DataNormalisation as dt
 MAX_ITERATIONS = 100
 
 
-####################################         ###############################################################
-#################################### K-means ###############################################################
-####################################         ###############################################################
-
-#
-# def update_centroids(centroids, clusters):
-#     assert (len(centroids) == len(clusters))
-#     clusters = np.array(clusters)
-#     for i, cluster in enumerate(clusters):
-#         centroids[i] = sum(cluster) / len(cluster)
-#     return centroids
-#
-#
-# def check_converge(centroids, old_centroids, num_iterations, threshold=0):
-#     if num_iterations > MAX_ITERATIONS:
-#         return True
-#     distances_between_new_and_old_centroids = np.array(
-#         [euclidean_distance(n, o) for n, o in zip(centroids, old_centroids)])
-#     if (distances_between_new_and_old_centroids <= threshold).all():
-#         return True
-#     return False
-#
-#
-# def randomize_centroids(data, k):
-#     indices = np.arange(len(data))  # generate a list from 0 to len(data)-1
-#     np.random.shuffle(indices)  # shuffle the obtained list
-#     random_indices = indices[:k]  # extact only first k indices
-#     centroids = [data[i] for i in range(len(data)) if
-#                  i in random_indices]  # todo  check if works with for i in random_indices
-#     return centroids
-#
-#
-# def kmeans(data, k=2, centroids=None):
-#     data = np.array(data)
-#     if not centroids:
-#         centroids = randomize_centroids(data, k)
-#
-#     old_centroids = centroids[:]
-#
-#     iterations = 0
-#
-#     while True:
-#         iterations += 1
-#
-#         clusters = [[] for i in range(k)]
-#
-#         for datapoint in data:
-#             centroid_index = find_closest_centroid_index(datapoint, centroids)
-#             clusters[centroid_index].append(datapoint)
-#
-#         old_centroids = centroids[:]
-#
-#         centroids = update_centroids(centroids, clusters)
-#
-#         if check_converge(centroids, old_centroids, iterations):
-#             break
-#
-#     return centroids
-#
-#
-# def euclidean_distance(p1, p2):
-#     return np.sqrt(np.sum([(c1 - c2) ** 2 for c1, c2 in zip(p1, p2)]))
-#
-#
-# def find_closest_centroid_index(datapoint, centroids):
-#     return min(enumerate(centroids), key=lambda x: euclidean_distance(datapoint, x[1]))[0]
-
-
-####################################                    ####################################################
-#################################### DATA NORMALISATION ####################################################
-####################################                    ####################################################
-# def normalise_training_data_set(data_set, data_set_mean, data_set_std):
-#     return np.array((data_set - data_set_mean) / data_set_std)
-#
-#
-# def normalise_data_set(data_set):
-#     data_set_mean = data_set.mean(axis=0)
-#     data_set_std = data_set.std(axis=0)
-#     return np.array((data_set - data_set_mean) / data_set_std), data_set_mean, data_set_std
-#
-#
-# def eliminate_outlier_column(data, column, m=3):  # smaller the m, the sensitives became
-#     mean = np.mean(data, axis=0)
-#     sd = np.std(data, axis=0)
-#     return np.array([x for x in data if (abs(x[column] - mean[column]) < m * sd[column]).any()])
-
-
-################################################               #############################################
-################################################ READ CSV FILE #############################################
-################################################               #############################################
-# def load_csv_and_extract_feature(fileName, indexs, label):
-#     with open(fileName) as csv_file:
-#         csv_reader = csv.reader(csv_file, delimiter=',')
-#         line_count = 0
-#         data = []
-#         for row in csv_reader:
-#             if line_count != 0:
-#                 data.append([float(row[i]) for i in indexs])
-#             line_count += 1
-#         return data
-
-
-############################################################################################################
-############################################################################################################
 filePathRusia = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\csv\\pythonScript_1000_telekom_VPNRusia.csv'
 filePathLocal = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\csv\\bruteForceWithValidPassword100Attempts200Status.csv'
 
@@ -190,6 +87,19 @@ kmean = km.Kmean()
 
 centers = kmean.kmeans(k_data, k=2)
 labels = kmean.get_labels(k_data, centers)
+
+#################### altready existent kmean algoritm
+df = DataFrame(k_data, columns=[0, 1,2,3])
+
+kmeans = KMeans(n_clusters=2).fit(df)
+centroids = kmeans.cluster_centers_
+print(centroids)
+
+plt.scatter(df[0], df[1], c=kmeans.labels_.astype(float), s=50, alpha=0.5)
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)
+plt.show()
+###########################
+
 
 # centers = kmeans(k_data, k=2)
 # labels = [find_closest_centroid_index(p, centers) for p in k_data]
