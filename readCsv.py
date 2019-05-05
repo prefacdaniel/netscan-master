@@ -9,9 +9,7 @@ import kmean as km
 import CSVReader as cr
 import DataNormalisation as dt
 
-
 MAX_ITERATIONS = 100
-
 
 filePathRusia = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\csv\\pythonScript_1000_telekom_VPNRusia.csv'
 filePathLocal = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\csv\\bruteForceWithValidPassword100Attempts200Status.csv'
@@ -88,17 +86,17 @@ kmean = km.Kmean()
 centers = kmean.kmeans(k_data, k=2)
 labels = kmean.get_labels(k_data, centers)
 
-#################### altready existent kmean algoritm
-df = DataFrame(k_data, columns=[0, 1,2,3])
-
-kmeans = KMeans(n_clusters=2).fit(df)
-centroids = kmeans.cluster_centers_
-print(centroids)
-
-plt.scatter(df[0], df[1], c=kmeans.labels_.astype(float), s=50, alpha=0.5)
-plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)
-plt.show()
-###########################
+#################### altready existent kmean algoritm #######################
+df = DataFrame(k_data, columns=[0, 1, 2, 3])                                #
+                                                                            #
+kmeans = KMeans(n_clusters=2).fit(df)                                       #
+centroids = kmeans.cluster_centers_                                         #
+print(centroids)                                                            #
+                                                                            #
+plt.scatter(df[0], df[1], c=kmeans.labels_.astype(float), s=50, alpha=0.5)  #
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)                #
+plt.show()                                                                  #
+#############################################################################
 
 
 # centers = kmeans(k_data, k=2)
