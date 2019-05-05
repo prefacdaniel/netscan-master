@@ -56,20 +56,15 @@ print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0]*100))
 print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
 
-X_myTest = dataset[800:]
-Y_test = numpy.zeros(len(X_myTest))
-scores = model.evaluate(X_myTest, Y_test)
-print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0]*100))
-print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
 
-# prediction = model.predict_classes(dataset_test)
-# print(prediction)
+prediction = model.predict_classes(dataset_test)
+print(prediction)
 prediction = model.predict(dataset_test)
 print(prediction)
 
 print("evaluate training data")
-# prediction = model.predict_classes(X)
-# print(prediction)
+prediction = model.predict_classes(X)
+print(prediction)
 prediction = model.predict(X)
 print(prediction)
