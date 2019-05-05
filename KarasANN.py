@@ -9,8 +9,8 @@ numpy.random.seed(7)
 dataset = numpy.loadtxt("C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\csv\\data_for_ann.csv", delimiter=",")
 dataset_test = numpy.loadtxt("C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\csv\\data_for_test.csv", delimiter=",")
 
-print("STD: ")
-print(dataset.std)
+# print("STD: ")
+# print(dataset.std)
 
 # Normalize Training Data
 
@@ -19,8 +19,8 @@ dataset = std_scale.transform(dataset)
 dataset_test = std_scale.transform(dataset_test)
 
 std_scale = preprocessing.StandardScaler().fit(dataset)
-print("STD: ")
-print(dataset.std)
+# print("STD: ")
+# print(dataset.std)
 
 
 #
@@ -39,12 +39,12 @@ print(dataset.std)
 
 
 # split into input (X) and output (Y) variables
-X = dataset[:800]
+X = dataset#[:800]
 Y = numpy.zeros(len(X))
 # create model
 model = Sequential()
-model.add(Dense(12, input_dim=4, activation='sigmoid'))
-model.add(Dense(6, activation='sigmoid'))
+model.add(Dense(12, input_dim=4, activation='tanh'))
+model.add(Dense(6, activation='tanh'))
 model.add(Dense(1, activation='tanh'))
 # Compile model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']) #todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
