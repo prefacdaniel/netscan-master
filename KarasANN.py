@@ -51,9 +51,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 # Fit the model
 model.fit(X, Y, epochs=150, batch_size=10)
 # evaluate the model
-scores = model.evaluate(X, Y)
-print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0]*100))
-print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
 
 
 
@@ -68,3 +66,16 @@ prediction = model.predict_classes(X)
 print(prediction)
 prediction = model.predict(X)
 print(prediction)
+
+
+
+scores = model.evaluate(X, Y)
+print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0]*100))
+print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+print("My ev:")
+test_Y = numpy.zeros(len(dataset_test))
+scores = model.evaluate(dataset_test, test_Y )
+print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0]*100))
+print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
+
