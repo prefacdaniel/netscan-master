@@ -44,8 +44,8 @@ X = dataset#[:800]
 Y = numpy.ones(len(X))
 # create model
 model = Sequential()
-model.add(Dense(12, input_dim=4, activation='tanh'))
-model.add(Dense(2, activation='tanh'))
+model.add(Dense(1, input_dim=4, activation='tanh'))
+# model.add(Dense(6, activation='tanh'))
 model.add(Dense(1, activation='elu'))
 # Compile model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']) #todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
