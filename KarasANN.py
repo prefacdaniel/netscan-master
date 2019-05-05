@@ -2,6 +2,7 @@
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn import preprocessing
+import keras
 import numpy
 # fix random seed for reproducibility
 numpy.random.seed(7)
@@ -45,7 +46,7 @@ Y = numpy.ones(len(X))
 model = Sequential()
 model.add(Dense(12, input_dim=4, activation='tanh'))
 model.add(Dense(2, activation='tanh'))
-model.add(Dense(1, activation='relu'))
+model.add(Dense(1, activation='elu'))
 # Compile model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']) #todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
 # Fit the model
