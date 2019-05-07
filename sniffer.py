@@ -41,6 +41,26 @@ def extract_stream():
                 print("nigga, this is big")
             print(stream.stream_index, ": ", stream.packet_list[0].source_ip, " -> ",
                   stream.packet_list[0].destination_ip)
+            if all(
+                    int(stream.packet_list[i].capture_time.split('.')[1]) <= int(stream.packet_list[i + 1].capture_time.split('.')[1]) for i in
+                    range(len(
+                            stream.packet_list) - 1)):  # todo: remove daca s a stabilit ca listele sunt mereu ordonate
+                print()
+            else:
+                print("List: ")
+                for i in range(len(stream.packet_list) - 1):
+                    print(int(stream.packet_list[i].capture_time.split('.')[1]))
+                print("LISTA NU ESTE ORDONATA !! ^")
+            if all(
+                    float(stream.packet_list[i].time_relative) <= float(stream.packet_list[i + 1].time_relative) for i in
+                    range(len(
+                            stream.packet_list) - 1)):  # todo: remove daca s a stabilit ca listele sunt mereu ordonate
+                print()
+            else:
+                print("List: ")
+                for i in range(len(stream.packet_list) - 1):
+                    print(float(stream.packet_list[i].time_relative))
+                print("LISTA NU ESTE ORDONATA !! ^")
             del stream_dic[stream.stream_index]
         else:
             stream_queue.put(stream)
