@@ -4,6 +4,9 @@ import time
 
 import pyshark
 
+server_ip = "127.0.0.1"
+server_port = "8080"
+
 current_milli_time = lambda: int(round(time.time() * 1000))
 # cap = pyshark.FileCapture('C:\\Users\\dprefac\\PycharmProjects\\KMeans\\wiresharkScans\\tryaspcap.cap')
 
@@ -33,14 +36,18 @@ def extract_stream():
             print("nothing in stream up: ", stream_queue.empty())
             break
         if current_milli_time() - stream.added_time_milliseconds > 10000:
-            print(len(stream.packet_list))
+            stream_size = len(stream.packet_list);
+            if stream_size > 100:
+                print("nigga, this is big")
+            print(stream.stream_index, ": ", stream.packet_list[0].source_ip, " -> ",
+                  stream.packet_list[0].destination_ip)
             del stream_dic[stream.stream_index]
         else:
             stream_queue.put(stream)
             time.sleep(3)
             print('readded')
         stream_queue.task_done()
-        # pass  # todo extract a stream by some rules (timeout or socket close) and after that, call extract_feature method
+        # todo extract a stream by some rules (timeout or socket close) and after that, call extract_feature method
 
 
 stream_exaction_thread = threading.Thread(target=extract_stream)
@@ -59,7 +66,7 @@ def sort_and_filter_by_stream_index(packet):
         else:
             print("more than 10 seconds has passed ", stream_index)
     else:
-        if packet.tcp_syn == "1":
+        if packet.tcp_syn == "1" and packet.tcp_ack == "0":
             stream = StreamPacket(stream_index, [packet], current_milli_time())
             stream_dic[stream_index] = stream
             stream_queue.put(stream)
@@ -82,6 +89,8 @@ packet_exaction_thread.start()
 def filter_packets(raw_packet):
     if raw_packet["ip"].proto == "6":
         packet_queue.put(Packet(raw_packet))
+    else:
+        print("not TCP")
 
 
 def capture_traffic(packet):
