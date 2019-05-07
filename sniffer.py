@@ -1,8 +1,9 @@
 import queue
 import threading
 import time
-
+from datetime import datetime
 import pyshark
+import math
 
 server_ip = "127.0.0.1"
 server_port = "8080"
@@ -25,8 +26,24 @@ stream_queue = queue.Queue()
 stream_dic = {}
 
 
-def extract_data(stream):
-    pass  # todo
+def extract_time_feature(packet):
+    date_string = packet.capture_time.split(".")[0]
+    date_time = datetime.utcfromtimestamp(int(date_string))
+    hour = date_time.hour
+    minute = date_time.minute
+    time_value = (hour * 60 + minute) / 8
+    return math.sin(math.radians(time_value))
+
+
+def extract_feature(stream):
+    if len(stream.packet_list) > 2:
+        if stream.packet_list[2].source_ip == stream.packet_list[0].source_ip:
+            iRTT = stream.packet_list[2].time_relative
+            total_time = stream.packet_list[len(stream.packet_list) - 1].time_relative
+            time_feature = extract_time_feature(stream.packet_list[0])
+            # minute = extract
+        else:
+            print("IP-urile nu sunt egale !!")
 
 
 def extract_stream():
@@ -36,14 +53,13 @@ def extract_stream():
             print("nothing in stream up: ", stream_queue.empty())
             break
         if current_milli_time() - stream.added_time_milliseconds > 10000:
-            stream_size = len(stream.packet_list)
-            if stream_size > 100:
-                print("nigga, this is big")
             print(stream.stream_index, ": ", stream.packet_list[0].source_ip, " -> ",
                   stream.packet_list[0].destination_ip)
             del stream_dic[stream.stream_index]
+            extract_feature(stream)
         else:
             stream_queue.put(stream)
+            print("stream queue size: ", stream_queue.qsize())
             time.sleep(3)
             print('Processing thread is sleeping....')
         stream_queue.task_done()
@@ -88,6 +104,7 @@ packet_exaction_thread.start()
 def filter_packets(raw_packet):
     if raw_packet["ip"].proto == "6":
         packet_queue.put(Packet(raw_packet))
+        # print("packet queue size: ", packet_queue.qsize())
     else:
         print("not TCP")
 
