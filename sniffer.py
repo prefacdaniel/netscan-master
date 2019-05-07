@@ -4,6 +4,9 @@ import time
 from datetime import datetime
 import pyshark
 import math
+import geoip2.database
+
+reader = geoip2.database.Reader('C:\\Users\\dprefac\\Downloads\\GeoLite2-Country.mmdb')
 
 server_ip = "192.168.43.28"  # TODO: Update fucking IP
 server_port = "8080"
@@ -25,6 +28,8 @@ packet_queue = queue.Queue()
 stream_queue = queue.Queue()
 stream_dic = {}
 
+high_danger_country_list = ["RU", "CN", "IL"]
+
 
 def extract_time_feature(packet):
     date_string = packet.capture_time.split(".")[0]
@@ -45,8 +50,9 @@ def extract_feature(stream):
             for packet in stream.packet_list:
                 if packet.destination_ip == server_ip:
                     data_len = data_len + int(packet.tcp_payload_size)
+            reader.country(stream.packet_list[0].destination_ip)
+            country_code = reader.country(stream.packet_list[0].source_ip).country.iso_code
 
-            print("data len:", data_len)
         else:
             print("IP-urile nu sunt egale !!")
 
