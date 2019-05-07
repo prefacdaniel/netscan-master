@@ -5,7 +5,7 @@ from datetime import datetime
 import pyshark
 import math
 
-server_ip = "127.0.0.1"
+server_ip = "192.168.43.28"  # TODO: Update fucking IP
 server_port = "8080"
 
 current_milli_time = lambda: int(round(time.time() * 1000))
@@ -41,7 +41,12 @@ def extract_feature(stream):
             iRTT = stream.packet_list[2].time_relative
             total_time = stream.packet_list[len(stream.packet_list) - 1].time_relative
             time_feature = extract_time_feature(stream.packet_list[0])
-            # minute = extract
+            data_len = 0
+            for packet in stream.packet_list:
+                if packet.destination_ip == server_ip:
+                    data_len = data_len + int(packet.tcp_payload_size)
+
+            print("data len:", data_len)
         else:
             print("IP-urile nu sunt egale !!")
 
