@@ -86,6 +86,8 @@ def extract_feature(stream):
 
         else:
             print("IP-urile nu sunt egale !!")
+            for packet in stream.packet_list:
+                print(packet.source_ip, "->", packet.destination_ip, " ", packet.tcp_syn, " ", packet.tcp_ack)
 
 
 def extract_stream():
