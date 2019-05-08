@@ -6,6 +6,8 @@ import pyshark
 import math
 import geoip2.database
 
+from Feature import FeatureVector
+
 reader = geoip2.database.Reader('C:\\Users\\dprefac\\Downloads\\GeoLite2-Country.mmdb')
 
 server_ip = "192.168.43.28"  # TODO: Update fucking IP
@@ -82,8 +84,17 @@ def extract_feature(stream):
             total_time = stream.packet_list[len(stream.packet_list) - 1].time_relative
             time_value_sin, time_value_cos = extract_time_feature(stream.packet_list[0])
             data_len = calculate_size(stream.packet_list)
-            ip_trust_feature = extract_ip_trust_feature(stream.packet_list[0].source_ip)
-
+            ip_trust_level = extract_ip_trust_feature(stream.packet_list[0].source_ip)
+            feature_vector = FeatureVector(irtt=iRTT,
+                                           total_time=total_time,
+                                           time_value_sin=time_value_sin,
+                                           time_value_cos=time_value_cos,
+                                           data_len=data_len,
+                                           ip_trust_level=ip_trust_level,
+                                           client_ip=stream.packet_list[0].source_ip,
+                                           server_ip=stream.packet_list[0].destination_ip,
+                                           server_port=stream.server_port
+                                           )
         else:
             print("IP-urile nu sunt egale !!")
             for packet in stream.packet_list:
@@ -126,7 +137,7 @@ def sort_and_filter_by_stream_index(packet):
             print("more than 10 seconds has passed ", stream_index)
     else:
         if packet.tcp_syn == "1" and packet.tcp_ack == "0":
-            stream = StreamPacket(stream_index, [packet], current_milli_time())
+            stream = StreamPacket(stream_index, [packet], current_milli_time(), server_port=packet.destination_port)
             stream_dic[stream_index] = stream
             stream_queue.put(stream)
 

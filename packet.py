@@ -9,3 +9,4 @@ class Packet:
         self.tcp_payload_size = tpc_packet.tcp.len  # tpc payload size in bytes
         self.tcp_syn = tpc_packet.tcp.flags_syn
         self.tcp_ack = tpc_packet.tcp.flags_ack
+        self.destination_port = tpc_packet.tcp.dstport
