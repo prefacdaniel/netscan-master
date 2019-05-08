@@ -29,6 +29,30 @@ stream_queue = queue.Queue()
 stream_dic = {}
 
 high_danger_country_list = ["RU", "CN", "IL"]
+ip_whitelist = ["127.0.0.1"]
+
+
+def extract_ip_trust_feature(source_ip):
+    if source_ip in ip_whitelist:
+        ip_trust_feature = 0
+    else:
+        split_ip = source_ip.split(".")
+        if split_ip[0] == "10":
+            ip_trust_feature = 0
+        elif split_ip[0] == "172" and 15 <= int(split_ip[1]) <= 31:
+            ip_trust_feature = 0
+        elif split_ip[0] == "192" and split_ip[1] == "168":
+            ip_trust_feature = 0
+        else:
+            country_code = reader.country(
+                source_ip).country.iso_code  # todo exception handling (this shit may throw exceptions)
+            if country_code in high_danger_country_list:
+                ip_trust_feature = 1
+            elif country_code == "RO":
+                ip_trust_feature = 0.3
+            else:
+                ip_trust_feature = 0.6
+    return ip_trust_feature
 
 
 def extract_time_feature(packet):
@@ -36,14 +60,20 @@ def extract_time_feature(packet):
     date_time = datetime.utcfromtimestamp(int(date_string))
     hour = date_time.hour
     minute = date_time.minute
-    radians = ((hour * 60 + minute) / 1440) * (2 * math.pi)
+    total_minute_in_a_day = 1440
+    radians = ((hour * 60 + minute) / total_minute_in_a_day) * (2 * math.pi)
     time_value_sin = math.sin(radians)
     time_value_cos = math.cos(radians)
     return time_value_sin, time_value_cos
 
 
-# df['hr_sin'] = np.sin(df.hr*(2.*np.pi/24))
-# df['hr_cos'] = np.cos(df.hr*(2.*np.pi/24))
+def calculate_size(packet_list):
+    data_len = 0
+    for packet in packet_list:
+        if packet.destination_ip == server_ip:
+            data_len = data_len + int(packet.tcp_payload_size)
+    return data_len
+
 
 def extract_feature(stream):
     if len(stream.packet_list) > 2:
@@ -51,16 +81,8 @@ def extract_feature(stream):
             iRTT = stream.packet_list[2].time_relative
             total_time = stream.packet_list[len(stream.packet_list) - 1].time_relative
             time_value_sin, time_value_cos = extract_time_feature(stream.packet_list[0])
-            data_len = 0
-            for packet in stream.packet_list:
-                if packet.destination_ip == server_ip:
-                    data_len = data_len + int(packet.tcp_payload_size)
-
-            source_ip = stream.packet_list[0].source_ip
-            split_ip = source_ip.split(".")
-            if split_ip[0] == "10":
-                ip_trust_feature = 0;
-            # country_code = reader.country(source_ip).country.iso_code todo this
+            data_len = calculate_size(stream.packet_list)
+            ip_trust_feature = extract_ip_trust_feature(stream.packet_list[0].source_ip)
 
         else:
             print("IP-urile nu sunt egale !!")
