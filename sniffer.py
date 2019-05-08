@@ -36,22 +36,31 @@ def extract_time_feature(packet):
     date_time = datetime.utcfromtimestamp(int(date_string))
     hour = date_time.hour
     minute = date_time.minute
-    time_value = (hour * 60 + minute) / 8
-    return math.sin(math.radians(time_value))
+    radians = ((hour * 60 + minute) / 1440) * (2 * math.pi)
+    time_value_sin = math.sin(radians)
+    time_value_cos = math.cos(radians)
+    return time_value_sin, time_value_cos
 
+
+# df['hr_sin'] = np.sin(df.hr*(2.*np.pi/24))
+# df['hr_cos'] = np.cos(df.hr*(2.*np.pi/24))
 
 def extract_feature(stream):
     if len(stream.packet_list) > 2:
         if stream.packet_list[2].source_ip == stream.packet_list[0].source_ip:
             iRTT = stream.packet_list[2].time_relative
             total_time = stream.packet_list[len(stream.packet_list) - 1].time_relative
-            time_feature = extract_time_feature(stream.packet_list[0])
+            time_value_sin, time_value_cos = extract_time_feature(stream.packet_list[0])
             data_len = 0
             for packet in stream.packet_list:
                 if packet.destination_ip == server_ip:
                     data_len = data_len + int(packet.tcp_payload_size)
-            reader.country(stream.packet_list[0].destination_ip)
-            country_code = reader.country(stream.packet_list[0].source_ip).country.iso_code
+
+            source_ip = stream.packet_list[0].source_ip
+            split_ip = source_ip.split(".")
+            if split_ip[0] == "10":
+                ip_trust_feature = 0;
+            # country_code = reader.country(source_ip).country.iso_code todo this
 
         else:
             print("IP-urile nu sunt egale !!")

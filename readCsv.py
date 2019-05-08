@@ -33,6 +33,8 @@ dataFromLocal = dt.DataNormalisation.eliminate_outlier_column(dataFromLocal, 1)
 kMeanRusia = np.copy(dataFromRusia)
 kMeanLocal = np.copy(dataFromLocal)
 
+np.sin(1*(2.*np.pi/24))
+
 print(dataFromLocal.mean(axis=0))
 print(dataFromLocal.std(axis=0))
 print("old local")
