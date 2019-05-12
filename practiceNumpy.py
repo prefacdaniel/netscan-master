@@ -49,7 +49,6 @@ def eliminate_outlier_with_z_score(data_1, m=2):
     threshold = m
     mean_1 = np.mean(data_1, axis=0)
     std_1 = np.std(data_1, axis=0)
-
     for y in data_1:
         z_score = (y - mean_1) / std_1
         if not (np.abs(z_score) > threshold).any():
