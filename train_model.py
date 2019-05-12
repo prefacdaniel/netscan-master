@@ -49,8 +49,9 @@ print("after std: ")
 print(np.std(training_data, axis=0))
 
 Y = np.ones(len(training_data))
+np.random.seed(7)
 
-model = create_ann(x=training_data, y=Y, input_dim=7, l1_nnumber=14, l2_nnumber=7)  # try also with l2 deleted
+model = create_ann(x=training_data, y=Y, input_dim=7, l1_nnumber=13, l2_nnumber=4)  # try also with l2 deleted
 
 test_data = select_all_data_from_feature("hydra_1000_vpn_rusia1.pcapng")
 

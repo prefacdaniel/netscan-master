@@ -67,6 +67,8 @@ def create_ann(x,
     ann_model = Sequential()
     ann_model.add(Dense(l1_nnumber, input_dim=input_dim, activation=a1))
     ann_model.add(Dense(l2_nnumber, activation=a2))
+    ann_model.add(Dense(l2_nnumber, activation=a2))
+    ann_model.add(Dense(l2_nnumber, activation=a2))
     ann_model.add(Dense(l3_nnumber, activation=a3))
     ann_model.compile(loss=loss, optimizer=optimzier,
                   metrics=['accuracy'])  # todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
