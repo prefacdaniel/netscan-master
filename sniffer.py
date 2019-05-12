@@ -15,6 +15,8 @@ server_ip = "192.168.0.100"
 server_port = "9999"
 
 current_milli_time = lambda: int(round(time.time() * 1000))
+
+offline_processing = True
 # cap = pyshark.FileCapture('C:\\Users\\dprefac\\PycharmProjects\\KMeans\\wiresharkScans\\tryaspcap.cap')
 
 
@@ -79,21 +81,32 @@ def calculate_size(packet_list):
 def extract_feature(stream):
     if len(stream.packet_list) > 2:
         if stream.packet_list[2].source_ip == stream.packet_list[0].source_ip:
-            iRTT = stream.packet_list[2].time_relative
+            irtt = stream.packet_list[2].time_relative
             total_time = stream.packet_list[len(stream.packet_list) - 1].time_relative
             time_value_sin, time_value_cos = extract_time_feature(stream.packet_list[0])
             data_len = calculate_size(stream.packet_list)
             ip_trust_level = extract_ip_trust_feature(stream.packet_list[0].source_ip)
-            feature_vector = FeatureVector(irtt=iRTT,
+            feature_vector = FeatureVector(irtt=irtt,
                                            total_time=total_time,
                                            time_value_sin=time_value_sin,
                                            time_value_cos=time_value_cos,
                                            data_len=data_len,
                                            ip_trust_level=ip_trust_level,
+                                           packet_number=len(stream.packet_list),
                                            client_ip=stream.packet_list[0].source_ip,
                                            server_ip=stream.packet_list[0].destination_ip,
                                            server_port=stream.server_port
                                            )
+            print(feature_vector.irtt,
+                  feature_vector.total_time,
+                  feature_vector.time_value_sin,
+                  feature_vector.time_value_cos,
+                  feature_vector.data_len,
+                  feature_vector.ip_trust_level,
+                  feature_vector.packet_number,
+                  feature_vector.client_ip,
+                  feature_vector.server_ip,
+                  feature_vector.server_port)
         else:
             print("IP-urile nu sunt egale !!")
             for packet in stream.packet_list:
@@ -106,9 +119,9 @@ def extract_stream():
         if stream is None:
             print("nothing in stream up: ", stream_queue.empty())
             break
-        if current_milli_time() - stream.added_time_milliseconds > 10000:
-            print(stream.stream_index, ": ", stream.packet_list[0].source_ip, " -> ",
-                  stream.packet_list[0].destination_ip)
+        if offline_processing or current_milli_time() - stream.added_time_milliseconds > 10000:
+            # print(stream.stream_index, ": ", stream.packet_list[0].source_ip, " -> ",
+            #       stream.packet_list[0].destination_ip)
             del stream_dic[stream.stream_index]
             extract_feature(stream)
         else:
@@ -121,14 +134,13 @@ def extract_stream():
 
 stream_exaction_thread = threading.Thread(target=extract_stream)
 stream_exaction_thread.setDaemon(True)
-stream_exaction_thread.start()
 
 
 def sort_and_filter_by_stream_index(packet):
     stream_index = packet.stream_index
     if stream_index in stream_dic:
         stream = stream_dic[stream_index]
-        if current_milli_time() - stream.added_time_milliseconds < 10000:
+        if offline_processing or current_milli_time() - stream.added_time_milliseconds < 10000:
             if float(packet.time_relative) > 1:
                 print(packet.time_relative, " ", stream_index, " ", packet.source_ip)
             stream_dic[stream_index].packet_list.append(packet)
@@ -148,12 +160,24 @@ def get_packet():
         if packet is None:
             break
         sort_and_filter_by_stream_index(packet)
+        print("Extracted")
         packet_queue.task_done()
+
+
+def get_packet_offline():
+    packet = packet_queue.get()
+    while packet is not None:
+        sort_and_filter_by_stream_index(packet)
+        print("Extracted")
+        if packet_queue.empty():
+            packet = None
+        else:
+            packet = packet_queue.get()
+    print("Done getting packets offline")
 
 
 packet_exaction_thread = threading.Thread(target=get_packet)
 packet_exaction_thread.setDaemon(True)
-packet_exaction_thread.start()
 
 
 def filter_and_save_packets(raw_packet):
@@ -173,21 +197,40 @@ def save_packet(raw_packet):
     packet_queue.put(Packet(raw_packet))
 
 
-def capture_traffic(packet):
+def capture_traffic_live(packet):
     t = threading.Thread(target=save_packet(packet))
     t.setDaemon(True)
     t.start()
 
 
+def capture_traffic_offline(packet):
+    t = threading.Thread(target=filter_and_save_packets(packet))
+    t.setDaemon(True)
+    t.start()
+
+
+# todo: test if it's still working as it should
 def capture_live_traffic(bpf_filter="tcp"):
+    offline_processing = False
+    packet_exaction_thread.start()
+    stream_exaction_thread.start()
     capture = pyshark.LiveCapture(bpf_filter=bpf_filter)
     # capture.sniff_continuously()
-    capture.apply_on_packets(capture_traffic)
+    capture.apply_on_packets(capture_traffic_live)
 
 
 def capture_traffic_from_file(file_path):
+    offline_processing = True
     capture = pyshark.FileCapture(input_file=file_path)
-    capture.apply_on_packets(filter_and_save_packets)
+    start_time = current_milli_time()
+    print(0, "Start extracting data from file...")
+    for packet in capture:
+        capture_traffic_offline(packet)
+    # capture.apply_on_packets(capture_traffic_offline)
+    print((current_milli_time() - start_time) / 60000, "Start extracting packets from queue...")
+    get_packet_offline()
+    print(current_milli_time() - start_time, "Start extracting stream from dic...")
+    extract_stream()
 
 
 # capture_live_traffic(bpf_filter="tcp")
