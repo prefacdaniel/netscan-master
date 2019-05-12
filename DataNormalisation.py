@@ -20,6 +20,10 @@ def normalise_data_set(data_set):
     return np.array((data_set - data_set_mean) / data_set_std), data_set_mean, data_set_std
 
 
+def normalise_training_data_set(data_set, data_set_mean, data_set_std):
+    return np.array((data_set - data_set_mean) / data_set_std)
+
+
 class DataNormalisation:
     def __init__(self):
         pass

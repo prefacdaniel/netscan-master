@@ -2,7 +2,7 @@ import numpy as np
 
 from KarasANN import create_ann
 from database_connection import select_all_data_from_feature
-from DataNormalisation import eliminate_outlier_with_z_score, normalise_data_set
+from DataNormalisation import eliminate_outlier_with_z_score, normalise_data_set, normalise_training_data_set
 
 
 def new_training(model_id, feature_vectors, utilised_columns, columns_to_standardise):
@@ -50,25 +50,25 @@ print(np.std(training_data, axis=0))
 
 Y = np.ones(len(training_data))
 
-model = create_ann(x=training_data, y=Y, input_dim=7, )
-
+model = create_ann(x=training_data, y=Y, input_dim=7, l1_nnumber=14, l2_nnumber=7)  # try also with l2 deleted
 
 test_data = select_all_data_from_feature("hydra_1000_vpn_rusia1.pcapng")
 
 test_data = np.array(test_data)  # converting to numpy
 test_data = test_data[:, utilised_columns]  # extracting only necessary columns
 test_data = np.array(test_data).astype(np.float64)  # convert to numpy float
+for item in modified_column:  # standardise data set
+    test_data[:, item[0]] = normalise_training_data_set(test_data[:, item[0]], item[1], item[2])
 
 
-prediction = model.predict_classes(test_data)
-print(prediction)
-prediction = model.predict(test_data)
-print(prediction)
 
 print("evaluate training data")
 prediction = model.predict_classes(training_data)
 print(prediction)
 prediction = model.predict(training_data)
+print(prediction)
+
+prediction = model.predict(test_data)
 print(prediction)
 
 scores = model.evaluate(training_data, Y)
