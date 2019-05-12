@@ -5,6 +5,7 @@ from sklearn import preprocessing
 import keras
 import numpy
 from keras.models import model_from_json
+from sklearn.externals.joblib import dump, load
 
 # fix random seed for reproducibility
 numpy.random.seed(7)
@@ -22,6 +23,9 @@ std_scale = preprocessing.StandardScaler().fit(dataset)
 dataset = std_scale.transform(dataset)
 dataset_test = std_scale.transform(dataset_test)
 
+
+dump(std_scale, 'std_scaler.bin', compress=True)
+sc = load('std_scaler.bin')
 std_scale = preprocessing.StandardScaler().fit(dataset)
 # print("STD: ")
 # print(dataset.std)

@@ -5,13 +5,14 @@ from datetime import datetime
 import pyshark
 import math
 import geoip2.database
-
 from Feature import FeatureVector
+from packet import Packet
+from stream import StreamPacket
 
 reader = geoip2.database.Reader('C:\\Users\\dprefac\\Downloads\\GeoLite2-Country.mmdb')
 
-server_ip = "192.168.43.28"  # TODO: Update fucking IP
-server_port = "8080"
+server_ip = "192.168.0.100"
+server_port = "9999"
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 # cap = pyshark.FileCapture('C:\\Users\\dprefac\\PycharmProjects\\KMeans\\wiresharkScans\\tryaspcap.cap')
@@ -23,8 +24,6 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 # for packet in capture.sniff_continuously(packet_count=5):
 #     print(packet)
 #
-from packet import Packet
-from stream import StreamPacket
 
 packet_queue = queue.Queue()
 stream_queue = queue.Queue()
@@ -137,7 +136,8 @@ def sort_and_filter_by_stream_index(packet):
             print("more than 10 seconds has passed ", stream_index)
     else:
         if packet.tcp_syn == "1" and packet.tcp_ack == "0":
-            stream = StreamPacket(stream_index, [packet], current_milli_time(), server_port=packet.destination_port)
+            initial_connection_time = round(float(packet.capture_time)) * 1000
+            stream = StreamPacket(stream_index, [packet], initial_connection_time, server_port=packet.destination_port)
             stream_dic[stream_index] = stream
             stream_queue.put(stream)
 
@@ -156,20 +156,40 @@ packet_exaction_thread.setDaemon(True)
 packet_exaction_thread.start()
 
 
-def filter_packets(raw_packet):
-    if raw_packet["ip"].proto == "6":
-        packet_queue.put(Packet(raw_packet))
-        # print("packet queue size: ", packet_queue.qsize())
+def filter_and_save_packets(raw_packet):
+    if raw_packet["eth"].type == "0x00000800":
+        if raw_packet["ip"].proto == "6":
+            if raw_packet["ip"].dst == server_ip and raw_packet["tcp"].dstport == server_port \
+                    or \
+                    raw_packet["ip"].src == server_ip and raw_packet["tcp"].srcport == server_port:
+                packet_queue.put(Packet(raw_packet))
+        else:
+            print("not TCP")
     else:
-        print("not TCP")
+        print("not IPV4")
+
+
+def save_packet(raw_packet):
+    packet_queue.put(Packet(raw_packet))
 
 
 def capture_traffic(packet):
-    t = threading.Thread(target=filter_packets(packet))
+    t = threading.Thread(target=save_packet(packet))
     t.setDaemon(True)
     t.start()
 
 
-capture = pyshark.LiveCapture(bpf_filter="tcp")
-# capture.sniff_continuously()
-capture.apply_on_packets(capture_traffic)
+def capture_live_traffic(bpf_filter="tcp"):
+    capture = pyshark.LiveCapture(bpf_filter=bpf_filter)
+    # capture.sniff_continuously()
+    capture.apply_on_packets(capture_traffic)
+
+
+def capture_traffic_from_file(file_path):
+    capture = pyshark.FileCapture(input_file=file_path)
+    capture.apply_on_packets(filter_and_save_packets)
+
+
+# capture_live_traffic(bpf_filter="tcp")
+capture_traffic_from_file(
+    file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\hydra_1000_vpn_rusia1.pcapng")
