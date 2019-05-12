@@ -30,6 +30,7 @@ offline_processing = True
 packet_queue = queue.Queue()
 stream_queue = queue.Queue()
 stream_dic = {}
+feature_vectors = []
 
 high_danger_country_list = ["RU", "CN", "IL"]
 ip_whitelist = ["127.0.0.1"]
@@ -80,7 +81,7 @@ def calculate_size(packet_list):
 
 def extract_feature(stream):
     if len(stream.packet_list) > 2:
-        if stream.packet_list[2].source_ip == stream.packet_list[0].source_ip:
+        if stream.packet_list[2].source_ip == stream.packet_list[0].source_ip:  # todo extract irtt also when second packet came later
             irtt = stream.packet_list[2].time_relative
             total_time = stream.packet_list[len(stream.packet_list) - 1].time_relative
             time_value_sin, time_value_cos = extract_time_feature(stream.packet_list[0])
@@ -97,6 +98,7 @@ def extract_feature(stream):
                                            server_ip=stream.packet_list[0].destination_ip,
                                            server_port=stream.server_port
                                            )
+            feature_vectors.append(feature_vector)
             print(feature_vector.irtt,
                   feature_vector.total_time,
                   feature_vector.time_value_sin,
@@ -114,11 +116,8 @@ def extract_feature(stream):
 
 
 def extract_stream():
-    while True:
-        stream = stream_queue.get()
-        if stream is None:
-            print("nothing in stream up: ", stream_queue.empty())
-            break
+    stream = stream_queue.get()
+    while stream is not None:
         if offline_processing or current_milli_time() - stream.added_time_milliseconds > 10000:
             # print(stream.stream_index, ": ", stream.packet_list[0].source_ip, " -> ",
             #       stream.packet_list[0].destination_ip)
@@ -129,6 +128,10 @@ def extract_stream():
             print("stream queue size: ", stream_queue.qsize())
             time.sleep(3)
             print('Processing thread is sleeping....')
+        if stream_queue.empty():
+            stream = None
+        else:
+            stream = stream_queue.get()
         stream_queue.task_done()
 
 
@@ -221,18 +224,22 @@ def capture_live_traffic(bpf_filter="tcp"):
 
 def capture_traffic_from_file(file_path):
     offline_processing = True
-    capture = pyshark.FileCapture(input_file=file_path)
+    capture = pyshark.FileCapture(input_file=file_path, display_filter="tcp")
     start_time = current_milli_time()
     print(0, "Start extracting data from file...")
+    a=0
     for packet in capture:
+        print(a)
+        a = a+1
         capture_traffic_offline(packet)
     # capture.apply_on_packets(capture_traffic_offline)
     print((current_milli_time() - start_time) / 60000, "Start extracting packets from queue...")
     get_packet_offline()
     print(current_milli_time() - start_time, "Start extracting stream from dic...")
     extract_stream()
+    return feature_vectors
 
 
 # capture_live_traffic(bpf_filter="tcp")
 capture_traffic_from_file(
-    file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\hydra_1000_vpn_rusia1.pcapng")
+    file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\pythonScript_1000_vpn_telekom_valid.pcapng")
