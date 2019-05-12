@@ -65,7 +65,7 @@ def extract_time_feature(packet):
     hour = date_time.hour
     minute = date_time.minute
     total_minute_in_a_day = 1440
-    radians = ((hour * 60 + minute) / total_minute_in_a_day) * (2 * math.pi)
+    radians = (((12+hour) * 60 + minute) / total_minute_in_a_day) * (2 * math.pi)
     time_value_sin = math.sin(radians)
     time_value_cos = math.cos(radians)
     return time_value_sin, time_value_cos
@@ -241,5 +241,5 @@ def capture_traffic_from_file(file_path):
 
 
 # capture_live_traffic(bpf_filter="tcp")
-capture_traffic_from_file(
-    file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\pythonScript_1000_vpn_telekom_valid.pcapng")
+# capture_traffic_from_file(
+#     file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\pythonScript_1000_vpn_telekom_valid.pcapng")
