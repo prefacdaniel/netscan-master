@@ -23,56 +23,13 @@ std_scale = preprocessing.StandardScaler().fit(dataset)
 dataset = std_scale.transform(dataset)
 dataset_test = std_scale.transform(dataset_test)
 
-
 dump(std_scale, 'std_scaler.bin', compress=True)
 sc = load('std_scaler.bin')
 std_scale = preprocessing.StandardScaler().fit(dataset)
+
+
 # print("STD: ")
 # print(dataset.std)
-
-
-#
-# #Converting numpy array to dataframe
-# training_norm_col = pd.DataFrame(x_train_norm, index=train_norm.index, columns=train_norm.columns)
-# x_train.update(training_norm_col)
-# print (x_train.head())
-#
-# # Normalize Testing Data by using mean and SD of training set
-#
-# x_test_norm = std_scale.transform(test_norm)
-# testing_norm_col = pd.DataFrame(x_test_norm, index=test_norm.index, columns=test_norm.columns)
-# x_test.update(testing_norm_col)
-# print (x_train.head())
-
-
-# split into input (X) and output (Y) variables
-X = dataset  # [:800]
-Y = numpy.ones(len(X))
-# create model
-model = Sequential()
-model.add(Dense(6, input_dim=4, activation='tanh'))
-model.add(Dense(3, activation='tanh'))
-model.add(Dense(1, activation='relu'))
-# Compile model
-model.compile(loss='binary_crossentropy', optimizer='adam',
-              metrics=['accuracy'])  # todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
-# Fit the model
-model.fit(X, Y, epochs=150, batch_size=10)
-# evaluate the model
-
-
-prediction = model.predict_classes(dataset_test)
-print(prediction)
-prediction = model.predict(dataset_test)
-print(prediction)
-
-print("evaluate training data")
-prediction = model.predict_classes(X)
-print(prediction)
-prediction = model.predict(X)
-print(prediction)
-
-
 def save_json(model_name, trained_model):
     model_json = trained_model.to_json()
     with open(model_name + ".json", "w") as json_file:
@@ -90,24 +47,64 @@ def load_json_model(model_name):
     return loaded_trained_model
 
 
-scores = model.evaluate(X, Y)
-print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0] * 100))
-print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
-print("My ev:")
-test_Y = numpy.zeros(len(dataset_test))
-scores = model.evaluate(dataset_test, test_Y)
-print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0] * 100))
-print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+X = dataset  # [:800]
+Y = numpy.ones(len(X))
 
-save_json("model", model)
 
-loaded_model = load_json_model("model")
+def create_ann(x,
+               y,
+               input_dim=4,
+               epochs=150,
+               batch_size=10,
+               l1_nnumber=6,
+               l2_nnumber=3,
+               l3_nnumber=1,
+               a1 = 'tanh',
+               a2='tanh',
+               a3='relu',
+               loss='binary_crossentropy',
+               optimzier='adam'):
+    ann_model = Sequential()
+    ann_model.add(Dense(l1_nnumber, input_dim=input_dim, activation=a1))
+    ann_model.add(Dense(l2_nnumber, activation=a2))
+    ann_model.add(Dense(l3_nnumber, activation=a3))
+    ann_model.compile(loss=loss, optimizer=optimzier,
+                  metrics=['accuracy'])  # todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
+    ann_model.fit(x, y, epochs=epochs, batch_size=batch_size)
+    return ann_model
 
-scores = loaded_model.evaluate(X, Y)
-print("\n%s: %.2f%%" % (loaded_model.metrics_names[0], scores[0] * 100))
-print("\n%s: %.2f%%" % (loaded_model.metrics_names[1], scores[1] * 100))
-print("My ev:")
-test_Y = numpy.zeros(len(dataset_test))
-scores = loaded_model.evaluate(dataset_test, test_Y)
-print("\n%s: %.2f%%" % (loaded_model.metrics_names[0], scores[0] * 100))
-print("\n%s: %.2f%%" % (loaded_model.metrics_names[1], scores[1] * 100))
+
+# model = create_ann(X, Y)
+#
+# prediction = model.predict_classes(dataset_test)
+# print(prediction)
+# prediction = model.predict(dataset_test)
+# print(prediction)
+#
+# print("evaluate training data")
+# prediction = model.predict_classes(X)
+# print(prediction)
+# prediction = model.predict(X)
+# print(prediction)
+#
+# scores = model.evaluate(X, Y)
+# print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0] * 100))
+# print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+# print("My ev:")
+# test_Y = numpy.zeros(len(dataset_test))
+# scores = model.evaluate(dataset_test, test_Y)
+# print("\n%s: %.2f%%" % (model.metrics_names[0], scores[0] * 100))
+# print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+#
+# save_json("model", model)
+#
+# loaded_model = load_json_model("model")
+#
+# scores = loaded_model.evaluate(X, Y)
+# print("\n%s: %.2f%%" % (loaded_model.metrics_names[0], scores[0] * 100))
+# print("\n%s: %.2f%%" % (loaded_model.metrics_names[1], scores[1] * 100))
+# print("My ev:")
+# test_Y = numpy.zeros(len(dataset_test))
+# scores = loaded_model.evaluate(dataset_test, test_Y)
+# print("\n%s: %.2f%%" % (loaded_model.metrics_names[0], scores[0] * 100))
+# print("\n%s: %.2f%%" % (loaded_model.metrics_names[1], scores[1] * 100))
