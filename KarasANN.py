@@ -59,22 +59,20 @@ def create_ann(x,
                l1_nnumber=6,
                l2_nnumber=3,
                l3_nnumber=1,
-               a1 = 'tanh',
+               a1='tanh',
                a2='tanh',
                a3='relu',
                loss='binary_crossentropy',
                optimzier='adam'):
     ann_model = Sequential()
-    ann_model.add(Dense(l1_nnumber, input_dim=input_dim, activation=a1))
-    ann_model.add(Dense(l2_nnumber, activation=a2))
-    ann_model.add(Dense(l2_nnumber, activation=a2))
-    ann_model.add(Dense(l2_nnumber, activation=a2))
-    ann_model.add(Dense(l3_nnumber, activation=a3))
+    ann_model.add(Dense(l1_nnumber, init='uniform', input_dim=input_dim, activation=a1))
+    ann_model.add(Dense(l2_nnumber, init='uniform', activation=a2))
+    ann_model.add(Dense(l3_nnumber, init='uniform', activation=a3))
     ann_model.compile(loss=loss, optimizer=optimzier,
-                  metrics=['accuracy'])  # todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
+                      metrics=[
+                          'accuracy'])  # todo: for loss user: binary_crossentropy or mean_squared_logarithmic_error
     ann_model.fit(x, y, epochs=epochs, batch_size=batch_size)
     return ann_model
-
 
 # model = create_ann(X, Y)
 #
