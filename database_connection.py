@@ -2,6 +2,7 @@ import sqlite3
 
 database_path = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\database\\feature_vectors.db'
 
+
 def insert_data(feature_vectors, instance_name):
     conn = sqlite3.connect(database_path)
     for feature in feature_vectors:
@@ -39,3 +40,19 @@ def select_all_data_from_feature(source_name):
     cursor.execute("SELECT * FROM feature where source LIKE \"" + source_name + "\"")
     rows = cursor.fetchall()
     return rows
+
+
+def get_model_by_id(model_id):
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM model WHERE id = " + model_id)
+    rows = cursor.fetchall()
+    return rows[0]
+
+
+def get_algorithm_name_by_id(algorithm_id):
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM algorithms WHERE id = " + algorithm_id)
+    rows = cursor.fetchall()
+    return rows[0][1]
