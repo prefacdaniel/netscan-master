@@ -3,7 +3,7 @@ import sqlite3
 database_path = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\database\\feature_vectors.db'
 
 
-def insert_data(feature_vectors, instance_name):
+def insert_feature_vectors(feature_vectors, instance_name):
     conn = sqlite3.connect(database_path)
     for feature in feature_vectors:
         conn.executemany('INSERT INTO feature VALUES (NULL,?,?,?,?,?,?,?,?,?)',
@@ -16,7 +16,7 @@ def insert_data(feature_vectors, instance_name):
                            feature.client_ip,
                            feature.packet_number,
                            instance_name
-                           )])
+                           )])  # //todo probably this muse be modified
     conn.commit()
     conn.close()
 
@@ -56,3 +56,19 @@ def get_algorithm_name_by_id(algorithm_id):
     cursor.execute("SELECT * FROM algorithms WHERE id = " + algorithm_id)
     rows = cursor.fetchall()
     return rows[0][1]
+
+
+def save_training(training):
+    conn = sqlite3.connect(database_path)
+    conn.executemany('INSERT INTO training VALUES (NULL,?,?,?,?,?,?,?)',
+                     [(
+                         training.model_id,
+                         training.date,
+                         training.utilised_columns,
+                         training.modified_columns,
+                         training.parameters_vector,
+                         training.model_body,
+                         training.weights
+                     )])
+    conn.commit()
+    conn.close()

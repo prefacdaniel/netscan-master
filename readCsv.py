@@ -1,11 +1,10 @@
-import csv
 import matplotlib.pyplot as plt
 import numpy
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import KMeans
 from pandas import DataFrame
-import kmean as km
+from algorithms import kmean as km
 import CSVReader as cr
 import DataNormalisation as dt
 

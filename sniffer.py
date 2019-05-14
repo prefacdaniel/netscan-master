@@ -5,16 +5,16 @@ from datetime import datetime
 import pyshark
 import math
 import geoip2.database
-from Feature import FeatureVector
-from packet import Packet
-from stream import StreamPacket
+from model.Feature import FeatureVector
+from model.packet import Packet
+from model.stream import StreamPacket
+from utils.utils import get_current_time_millis
 
 reader = geoip2.database.Reader('C:\\Users\\dprefac\\Downloads\\GeoLite2-Country.mmdb')
 
 server_ip = "192.168.0.100"
 server_port = "9999"
 
-current_milli_time = lambda: int(round(time.time() * 1000))
 
 offline_processing = True
 # cap = pyshark.FileCapture('C:\\Users\\dprefac\\PycharmProjects\\KMeans\\wiresharkScans\\tryaspcap.cap')
@@ -118,7 +118,7 @@ def extract_feature(stream):
 def extract_stream():
     stream = stream_queue.get()
     while stream is not None:
-        if offline_processing or current_milli_time() - stream.added_time_milliseconds > 10000:
+        if offline_processing or get_current_time_millis() - stream.added_time_milliseconds > 10000:
             # print(stream.stream_index, ": ", stream.packet_list[0].source_ip, " -> ",
             #       stream.packet_list[0].destination_ip)
             del stream_dic[stream.stream_index]
@@ -143,7 +143,7 @@ def sort_and_filter_by_stream_index(packet):
     stream_index = packet.stream_index
     if stream_index in stream_dic:
         stream = stream_dic[stream_index]
-        if offline_processing or current_milli_time() - stream.added_time_milliseconds < 10000:
+        if offline_processing or get_current_time_millis() - stream.added_time_milliseconds < 10000: #todo: verifiy get_current_time_millis method
             if float(packet.time_relative) > 1:
                 print(packet.time_relative, " ", stream_index, " ", packet.source_ip)
             stream_dic[stream_index].packet_list.append(packet)
@@ -225,7 +225,7 @@ def capture_live_traffic(bpf_filter="tcp"):
 def capture_traffic_from_file(file_path):
     offline_processing = True
     capture = pyshark.FileCapture(input_file=file_path, display_filter="tcp")
-    start_time = current_milli_time()
+    start_time = get_current_time_millis()
     print(0, "Start extracting data from file...")
     a=0
     for packet in capture:
@@ -233,9 +233,9 @@ def capture_traffic_from_file(file_path):
         a = a+1
         capture_traffic_offline(packet)
     # capture.apply_on_packets(capture_traffic_offline)
-    print((current_milli_time() - start_time) / 60000, "Start extracting packets from queue...")
+    print((get_current_time_millis() - start_time) / 60000, "Start extracting packets from queue...")
     get_packet_offline()
-    print(current_milli_time() - start_time, "Start extracting stream from dic...")
+    print(get_current_time_millis() - start_time, "Start extracting stream from dic...")
     extract_stream()
     return feature_vectors
 

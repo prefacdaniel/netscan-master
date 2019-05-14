@@ -1,16 +1,15 @@
-import keras
-import numpy
 import numpy as np
 
-from KarasANN import create_ann
-from database_connection import select_all_data_from_feature, get_algorithm_name_by_id, get_model_by_id
+from model.Training import Training
+import repository.database_connection as db
 from DataNormalisation import eliminate_outlier_with_z_score, normalise_data_set, normalise_training_data_set
-from isolation_forest import train_isolation_forest
+from algorithms.isolation_forest import train_isolation_forest
+from utils.utils import get_current_time_millis
 
 utilised_columns = [1, 2, 3, 4, 5, 6, 8]
 columns_to_standardise = [0, 1, 4, 6]
-training_feature_vectors = select_all_data_from_feature("pythonScript_1000_vpn_telekom_valid.pcapng")
-test_feature_vectors = select_all_data_from_feature("hydra_1000_vpn_rusia1.pcapng")
+training_feature_vectors = db.select_all_data_from_feature("pythonScript_1000_vpn_telekom_valid.pcapng")
+test_feature_vectors = db.select_all_data_from_feature("hydra_1000_vpn_rusia1.pcapng")
 
 
 def load_and_prepare_training_data(feature_vectors, utilised_columns, columns_to_standardise):
@@ -45,22 +44,33 @@ test_data = load_and_prepare_test_data(feature_vectors=test_feature_vectors,
                                        modified_columns=modified_columns)
 
 
-
-
-
 def new_training(model_id,
                  training_feature_vectors,
                  test_feature_vectors,
                  utilised_columns,
                  columns_to_standardise):
-    model_data = get_model_by_id(model_id)
-    algorithm_name = get_algorithm_name_by_id(str(model_data[2])) #model[2] is algorithm id
+    model_data = db.get_model_by_id(model_id)
+    algorithm_name = db.get_algorithm_name_by_id(str(model_data[2]))  # model[2] is algorithm id
 
     training_data, modified_columns = load_and_prepare_training_data(feature_vectors=training_feature_vectors,
                                                                      utilised_columns=utilised_columns,
                                                                      columns_to_standardise=columns_to_standardise)
     test_data = load_and_prepare_test_data(feature_vectors=test_feature_vectors,
                                            modified_columns=modified_columns)
+
+    utilised_columns_str = ""
+    for column in utilised_columns:
+        utilised_columns_str = utilised_columns_str + str(column) + ','
+    utilised_columns_str = utilised_columns_str[:-1]
+
+    modified_columns_str = ""
+
+    for modified_column in modified_columns:
+        for element in modified_column:
+            modified_columns_str = modified_columns_str + str(element) + ","
+        modified_columns_str = modified_columns_str[:-1]
+        modified_columns_str = modified_columns_str + "|"
+    modified_columns_str = modified_columns_str[:-1]
 
     if algorithm_name == "ann":
         pass  # todo
@@ -83,6 +93,16 @@ def new_training(model_id,
         # outliers ----
         print("Accuracy:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
     # elif #todo throw exception
+    training = Training(
+        id="",
+        date=get_current_time_millis(),
+        model_id=model_id,
+        utilised_columns=utilised_columns_str,
+        modified_columns=modified_columns_str,
+        parameters_vector="",
+        model_body="",
+        weights="")
+    db.save_training(training)
 
 
 new_training(model_id="3",
