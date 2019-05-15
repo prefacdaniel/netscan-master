@@ -40,7 +40,7 @@ def new_training(model_id,
                  utilised_columns,
                  columns_to_standardise):
     model_data = db.get_model_by_id(model_id)
-    algorithm_name = db.get_algorithm_name_by_id(str(model_data[2]))  # model[2] is algorithm id
+    algorithm_name = db.get_algorithm_name_by_id(str(model_data.algorithm_id))
 
     training_data, modified_columns = load_and_prepare_training_data(feature_vectors=training_feature_vectors,
                                                                      utilised_columns=utilised_columns,
@@ -82,6 +82,7 @@ def get_and_compile_training_model_by_id(training_id):
     modified_columns = []
     for item in training.modified_columns.split("|"):
         modified_columns.append(item.split(","))
+    return model, utilised_columns, modified_columns, training
 
 
 def evaluate_model(model, test_feature_vectors, training_data, modified_columns):
@@ -117,6 +118,23 @@ def get_utilised_columns_string(utilised_columns):
     utilised_columns_str = utilised_columns_str[:-1]
     return utilised_columns_str
 
+
+running_active_trainings = {}
+
+
+def load_active_trainings():
+    active_trainings = db.get_all_active_training()
+
+    for active_training in active_trainings:
+        running_active_training = get_and_compile_training_model_by_id(active_training.training_id)
+        model_data = db.get_model_by_id(running_active_training[3].model_id)
+        server = db.get_server_by_id(str(model_data.server_id))
+        key = str(server.ip) + ":" + str(server.port)
+        running_active_trainings[key] = running_active_training
+        print("done")
+
+
+load_active_trainings()
 
 get_and_compile_training_model_by_id("35")
 

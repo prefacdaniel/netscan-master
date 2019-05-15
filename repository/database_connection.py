@@ -1,5 +1,8 @@
 import sqlite3
 
+from model.ActiveTraining import ActiveTraining
+from model.Model import Model
+from model.Server import Server
 from model.Training import Training
 
 database_path = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\database\\feature_vectors.db'
@@ -49,7 +52,8 @@ def get_model_by_id(model_id):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM model WHERE id = " + model_id)
     rows = cursor.fetchall()
-    return rows[0]
+    model = Model(id=rows[0][0], server_id=rows[0][1], algorithm_id=rows[0][2])
+    return model
 
 
 def get_algorithm_name_by_id(algorithm_id):
@@ -95,6 +99,18 @@ def get_training_by_id(training_id):
         weights=rows[0][7])
 
 
+def get_all_active_training():
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM active_training")
+    rows = cursor.fetchall()
+    active_trainings = []
+    for training in rows:
+        active_training = ActiveTraining(id=training[0], algorithm_id=training[1], training_id=training[2])
+        active_trainings.append(active_training)
+    return active_trainings
+
+
 def save_training_element(training_element):
     conn = sqlite3.connect(database_path)
     for feature in training_element.training_feature_vectors:
@@ -104,3 +120,12 @@ def save_training_element(training_element):
                            )])
     conn.commit()
     conn.close()
+
+
+def get_server_by_id(server_id):
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM server WHERE id = " + server_id)
+    rows = cursor.fetchall()
+    server = Server(id=rows[0][0], ip=rows[0][1], port=rows[0][2])
+    return server
