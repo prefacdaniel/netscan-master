@@ -1,5 +1,7 @@
 import sqlite3
 
+from model.Training import Training
+
 database_path = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\database\\feature_vectors.db'
 
 
@@ -75,6 +77,22 @@ def save_training(training):
     conn.commit()
     conn.close()
     return last_id
+
+
+def get_training_by_id(training_id):
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM training WHERE id = " + training_id)
+    rows = cursor.fetchall()
+    return Training(
+        id=rows[0][0],
+        model_id=rows[0][1],
+        date=rows[0][2],
+        utilised_columns=rows[0][3],
+        modified_columns=rows[0][4],
+        parameters_vector=rows[0][5],
+        model_body=rows[0][6],
+        weights=rows[0][7])
 
 
 def save_training_element(training_element):

@@ -74,8 +74,14 @@ def new_training(model_id,
     db.save_training_element(training_element)
     return model, training_id, modified_columns, training_data
 
-def get_and_compile_training_model(training_id):
-    pass#todo
+
+def get_and_compile_training_model_by_id(training_id):
+    training = db.get_training_by_id(training_id)
+    model = joblib.load(training.model_body)
+    utilised_columns = training.utilised_columns.split(",")
+    modified_columns = []
+    for item in training.modified_columns.split("|"):
+        modified_columns.append(item.split(","))
 
 
 def evaluate_model(model, test_feature_vectors, training_data, modified_columns):
@@ -84,7 +90,7 @@ def evaluate_model(model, test_feature_vectors, training_data, modified_columns)
     y_pred_train = model.predict(training_data)
     y_pred_test = model.predict(test_data)
     y_pred_outliers = model.predict(test_data)
-    # model = joblib.load(joblib_file)#todo use for load
+
     # print(y_pred_train)
     print(y_pred_test)
     print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])
@@ -111,6 +117,8 @@ def get_utilised_columns_string(utilised_columns):
     utilised_columns_str = utilised_columns_str[:-1]
     return utilised_columns_str
 
+
+get_and_compile_training_model_by_id("35")
 
 model, training_id, modified_columns, training_data = new_training(model_id="3",
                                                                    training_feature_vectors=training_feature_vectors,
