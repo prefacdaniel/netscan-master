@@ -1,6 +1,6 @@
+
 import numpy as np
 from sklearn.externals import joblib
-
 from model.Training import Training
 import repository.database_connection as db
 from DataNormalisation import eliminate_outlier_with_z_score, normalise_data_set, normalise_training_data_set
@@ -52,9 +52,9 @@ def new_training(model_id,
     date = str(get_current_time_millis())
     file_path = "trained_models/model" + date[-9:] + ".pkl"
     if algorithm_name == "ann":
-        pass  # todo
+        pass#todo
     elif algorithm_name == "kmeans":
-        pass  # todo
+        pass#todo
     elif algorithm_name == "random_forest":
         model = train_isolation_forest(training_data)
         joblib.dump(model, file_path)
