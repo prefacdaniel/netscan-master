@@ -60,15 +60,29 @@ def get_algorithm_name_by_id(algorithm_id):
 
 def save_training(training):
     conn = sqlite3.connect(database_path)
-    conn.executemany('INSERT INTO training VALUES (NULL,?,?,?,?,?,?,?)',
-                     [(
-                         training.model_id,
-                         training.date,
-                         training.utilised_columns,
-                         training.modified_columns,
-                         training.parameters_vector,
-                         training.model_body,
-                         training.weights
-                     )])
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO training VALUES (NULL,?,?,?,?,?,?,?)',
+                   (
+                       training.model_id,
+                       training.date,
+                       training.utilised_columns,
+                       training.modified_columns,
+                       training.parameters_vector,
+                       training.model_body,
+                       training.weights
+                   ))
+    last_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return last_id
+
+
+def save_training_element(training_element):
+    conn = sqlite3.connect(database_path)
+    for feature in training_element.training_feature_vectors:
+        conn.executemany('INSERT INTO training_element VALUES (NULL,?,?)',
+                         [(feature[0],
+                           training_element.training_id,
+                           )])
     conn.commit()
     conn.close()

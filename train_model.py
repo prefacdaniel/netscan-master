@@ -1,9 +1,11 @@
 import numpy as np
+from sklearn.externals import joblib
 
 from model.Training import Training
 import repository.database_connection as db
 from DataNormalisation import eliminate_outlier_with_z_score, normalise_data_set, normalise_training_data_set
 from algorithms.isolation_forest import train_isolation_forest
+from model.TrainingElement import TrainingElement
 from utils.utils import get_current_time_millis
 
 utilised_columns = [1, 2, 3, 4, 5, 6, 8]
@@ -24,9 +26,6 @@ def load_and_prepare_training_data(feature_vectors, utilised_columns, columns_to
     return training_data, modified_column
 
 
-#
-
-
 def load_and_prepare_test_data(feature_vectors, modified_columns):
     test_data = np.array(feature_vectors)  # converting to numpy
     test_data = test_data[:, utilised_columns]  # extracting only necessary columns
@@ -36,17 +35,8 @@ def load_and_prepare_test_data(feature_vectors, modified_columns):
     return test_data
 
 
-training_data, modified_columns = load_and_prepare_training_data(feature_vectors=training_feature_vectors,
-                                                                 utilised_columns=utilised_columns,
-                                                                 columns_to_standardise=columns_to_standardise)
-
-test_data = load_and_prepare_test_data(feature_vectors=test_feature_vectors,
-                                       modified_columns=modified_columns)
-
-
 def new_training(model_id,
                  training_feature_vectors,
-                 test_feature_vectors,
                  utilised_columns,
                  columns_to_standardise):
     model_data = db.get_model_by_id(model_id)
@@ -55,61 +45,79 @@ def new_training(model_id,
     training_data, modified_columns = load_and_prepare_training_data(feature_vectors=training_feature_vectors,
                                                                      utilised_columns=utilised_columns,
                                                                      columns_to_standardise=columns_to_standardise)
-    test_data = load_and_prepare_test_data(feature_vectors=test_feature_vectors,
-                                           modified_columns=modified_columns)
 
-    utilised_columns_str = ""
-    for column in utilised_columns:
-        utilised_columns_str = utilised_columns_str + str(column) + ','
-    utilised_columns_str = utilised_columns_str[:-1]
+    utilised_columns_str = get_utilised_columns_string(utilised_columns)
+    modified_columns_str = get_modified_columns_str(modified_columns)
 
-    modified_columns_str = ""
-
-    for modified_column in modified_columns:
-        for element in modified_column:
-            modified_columns_str = modified_columns_str + str(element) + ","
-        modified_columns_str = modified_columns_str[:-1]
-        modified_columns_str = modified_columns_str + "|"
-    modified_columns_str = modified_columns_str[:-1]
-
+    date = str(get_current_time_millis())
+    file_path = "trained_models/model" + date[-9:] + ".pkl"
     if algorithm_name == "ann":
         pass  # todo
     elif algorithm_name == "kmeans":
         pass  # todo
     elif algorithm_name == "random_forest":
         model = train_isolation_forest(training_data)
-
-        y_pred_train = model.predict(training_data)
-        y_pred_test = model.predict(test_data)
-        y_pred_outliers = model.predict(test_data)
-        #
-
-        # print(y_pred_train)
-        print(y_pred_test)
-
-        print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])
-        # # Accuracy: 0.93
-
-        # outliers ----
-        print("Accuracy:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
+        joblib.dump(model, file_path)
     # elif #todo throw exception
     training = Training(
         id="",
-        date=get_current_time_millis(),
+        date=date,
         model_id=model_id,
         utilised_columns=utilised_columns_str,
         modified_columns=modified_columns_str,
         parameters_vector="",
-        model_body="",
+        model_body=file_path,
         weights="")
-    db.save_training(training)
+    training_id = db.save_training(training)
+    training_element = TrainingElement(training_id=training_id,
+                                       training_feature_vectors=training_feature_vectors)
+    db.save_training_element(training_element)
+    return model, training_id, modified_columns, training_data
+
+def get_and_compile_training_model(training_id):
+    pass#todo
 
 
-new_training(model_id="3",
-             training_feature_vectors=training_feature_vectors,
-             test_feature_vectors=test_feature_vectors,
-             utilised_columns=utilised_columns,
-             columns_to_standardise=columns_to_standardise)
+def evaluate_model(model, test_feature_vectors, training_data, modified_columns):
+    test_data = load_and_prepare_test_data(feature_vectors=test_feature_vectors,
+                                           modified_columns=modified_columns)
+    y_pred_train = model.predict(training_data)
+    y_pred_test = model.predict(test_data)
+    y_pred_outliers = model.predict(test_data)
+    # model = joblib.load(joblib_file)#todo use for load
+    # print(y_pred_train)
+    print(y_pred_test)
+    print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])
+    # # Accuracy: 0.93
+    # outliers ----
+    print("Accuracy:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
+
+
+def get_modified_columns_str(modified_columns):
+    modified_columns_str = ""
+    for modified_column in modified_columns:
+        for element in modified_column:
+            modified_columns_str = modified_columns_str + str(element) + ","
+        modified_columns_str = modified_columns_str[:-1]
+        modified_columns_str = modified_columns_str + "|"
+    modified_columns_str = modified_columns_str[:-1]
+    return modified_columns_str
+
+
+def get_utilised_columns_string(utilised_columns):
+    utilised_columns_str = ""
+    for column in utilised_columns:
+        utilised_columns_str = utilised_columns_str + str(column) + ','
+    utilised_columns_str = utilised_columns_str[:-1]
+    return utilised_columns_str
+
+
+model, training_id, modified_columns, training_data = new_training(model_id="3",
+                                                                   training_feature_vectors=training_feature_vectors,
+                                                                   utilised_columns=utilised_columns,
+                                                                   columns_to_standardise=columns_to_standardise)
+
+evaluate_model(model, test_feature_vectors, training_data, modified_columns)
 
 # Y = np.zeros(len(training_data))
 # np.random.seed(7)
