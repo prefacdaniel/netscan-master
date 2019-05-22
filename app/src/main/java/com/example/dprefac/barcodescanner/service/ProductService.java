@@ -1,5 +1,6 @@
 package com.example.dprefac.barcodescanner.service;
 
+import com.example.dprefac.barcodescanner.dto.Feature;
 import com.example.dprefac.barcodescanner.model.Product;
 
 import java.util.List;
@@ -33,4 +34,7 @@ public interface ProductService {
 
     @GET("/products")
     Call<List<Product>> getAllProducts();
+
+    @GET("/feature")
+    Call<List<Feature>> getAllFeature();
 }

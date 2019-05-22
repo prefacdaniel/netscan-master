@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static final String TAG = MainActivity.class.getName();
-    public static String HOST_URL = "http://192.168.185.45:8080";//byod
     public static final String INTERN_SERVER_ERROR = "Intern server error!";
+    public static String HOST_URL = "http://192.168.43.96:5000";
 
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(HOST_URL)

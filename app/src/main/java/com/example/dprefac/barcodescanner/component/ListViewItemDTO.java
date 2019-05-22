@@ -1,5 +1,7 @@
 package com.example.dprefac.barcodescanner.component;
 
+import com.example.dprefac.barcodescanner.dto.Feature;
+
 /**
  * Created by dprefac on 22-May-19.
  */
@@ -8,7 +10,7 @@ public class ListViewItemDTO {
 
     private boolean checked = false;
 
-    private String itemText = "";
+    private Feature itemText;
 
     public boolean isChecked() {
         return checked;
@@ -18,11 +20,11 @@ public class ListViewItemDTO {
         this.checked = checked;
     }
 
-    public String getItemText() {
+    public Feature getItemText() {
         return itemText;
     }
 
-    public void setItemText(String itemText) {
+    public void setItemText(Feature itemText) {
         this.itemText = itemText;
     }
 }
