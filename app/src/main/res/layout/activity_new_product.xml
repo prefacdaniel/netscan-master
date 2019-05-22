@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.dprefac.barcodescanner.NewProductActivity">
+
+    <TextView
+        android:id="@+id/newTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="52dp"
+        android:text="Barcode:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/newBarcodeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="116dp"
+        android:layout_marginTop="52dp"
+        android:text="12345"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/newTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/newTextView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="64dp"
+        android:text="Nume:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newTextView" />
+
+    <TextView
+        android:id="@+id/newTextView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="64dp"
+        android:text="Cantitate"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newTextView3" />
+
+    <Button
+        android:id="@+id/addProductButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="80dp"
+        android:onClick="addNewProduct"
+        android:text="Adauga produs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newQuantityInput" />
+
+    <EditText
+        android:id="@+id/newNameLabel"
+        android:layout_width="216dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="56dp"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintStart_toEndOf="@+id/newTextView3"
+        app:layout_constraintTop_toBottomOf="@+id/newBarcodeLabel" />
+
+    <EditText
+        android:id="@+id/newQuantityInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="52dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        app:layout_constraintStart_toEndOf="@+id/newTextView4"
+        app:layout_constraintTop_toBottomOf="@+id/newNameLabel" />
+
+</android.support.constraint.ConstraintLayout>
