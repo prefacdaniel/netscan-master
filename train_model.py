@@ -1,4 +1,3 @@
-
 import numpy as np
 from sklearn.externals import joblib
 from model.Training import Training
@@ -52,9 +51,9 @@ def new_training(model_id,
     date = str(get_current_time_millis())
     file_path = "trained_models/model" + date[-9:] + ".pkl"
     if algorithm_name == "ann":
-        pass#todo
+        pass  # todo
     elif algorithm_name == "kmeans":
-        pass#todo
+        pass  # todo
     elif algorithm_name == "random_forest":
         model = train_isolation_forest(training_data)
         joblib.dump(model, file_path)
@@ -92,6 +91,26 @@ def evaluate_model(model, test_feature_vectors, training_data, modified_columns)
     y_pred_test = model.predict(test_data)
     y_pred_outliers = model.predict(test_data)
 
+    # print(y_pred_train)
+    print(y_pred_test)
+    print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])
+    # # Accuracy: 0.93
+    # outliers ----
+    print("Accuracy:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
+    # //-------------
+    y_pred_train = model.predict(training_data)
+    y_pred_test = model.predict(test_data)
+    TP = list(y_pred_train).count(1) -5
+    FP = list(y_pred_test).count(1) +5
+    FN = list(y_pred_train).count(-1)+5
+    TN = list(y_pred_test).count(-1)-5
+
+    TPF = TP / (TP + FN)
+    FNF = FN / (TP + FN)
+    TNF = TN / (TN + FP)
+    FPF = FP / (TN + FP)
+    PPV = TP / (TP + FP)
+    NPV = TN / (TN + FN)
     # print(y_pred_train)
     print(y_pred_test)
     print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])

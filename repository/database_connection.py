@@ -1,5 +1,5 @@
 import sqlite3
-
+import json
 from model.ActiveTraining import ActiveTraining
 from model.Model import Model
 from model.Server import Server
@@ -129,3 +129,21 @@ def get_server_by_id(server_id):
     rows = cursor.fetchall()
     server = Server(id=rows[0][0], ip=rows[0][1], port=rows[0][2])
     return server
+
+
+def query_db(query, args=(), one=False):
+    conn = sqlite3.connect(database_path)
+    cur = conn.cursor()
+    cur.execute(query, args)
+    r = [dict((cur.description[i][0], value) \
+              for i, value in enumerate(row)) for row in cur.fetchall()]
+    cur.connection.close()
+    return (r[0] if r else None) if one else r
+
+
+def query_db_get_json(query, args=()):
+    my_query = query_db(query, args)
+    return json.dumps(my_query)
+
+
+print(query_db_get_json("SELECT * FROM feature"))
