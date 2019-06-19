@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import com.example.dprefac.barcodescanner.R;
+import com.example.dprefac.barcodescanner.adapter.DeviceListAdapter;
 import com.example.dprefac.barcodescanner.model.Device;
 
 import java.util.ArrayList;

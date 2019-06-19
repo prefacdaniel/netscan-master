@@ -1,4 +1,4 @@
-package com.example.dprefac.barcodescanner.component;
+package com.example.dprefac.barcodescanner.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -65,7 +65,6 @@ public class DeviceListAdapter extends ArrayAdapter<Device> {
             }
 
         }
-
         return v;
     }
 }
