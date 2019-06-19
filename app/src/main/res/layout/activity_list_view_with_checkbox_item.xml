@@ -1,22 +1,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <CheckBox
-        android:id="@+id/list_view_item_checkbox"
-        android:width="0dp"
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="false"
-        android:focusable="false"/>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_weight="0"
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/list_view_item_text"
-        android:layout_weight="9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"/>
+        android:layout_weight="9"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/list_view_item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:width="0dp"
+        android:clickable="false"
+        android:focusable="false" />
 
 </LinearLayout>

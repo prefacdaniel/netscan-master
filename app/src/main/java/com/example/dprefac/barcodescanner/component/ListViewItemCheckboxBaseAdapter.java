@@ -76,7 +76,7 @@ public class ListViewItemCheckboxBaseAdapter extends BaseAdapter {
 
         ListViewItemDTO listViewItemDto = listViewItemDtoList.get(itemIndex);
         viewHolder.getItemCheckbox().setChecked(listViewItemDto.isChecked());
-        viewHolder.getItemTextView().setText(listViewItemDto.getItemText().getId());
+        viewHolder.getItemTextView().setText(listViewItemDto.getIp());
 
         return convertView;
     }
