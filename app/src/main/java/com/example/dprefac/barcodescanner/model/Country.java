@@ -6,9 +6,9 @@ package com.example.dprefac.barcodescanner.model;
 
 public enum Country {
 
-    RO("RO"),
+    ROMANIA("RO"),
     RUSSIA("RU"),
-    CHINA("CH");
+    CHINA("CN");
 
 
     Country(String field) {

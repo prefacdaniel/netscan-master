@@ -1,11 +1,14 @@
 package com.example.dprefac.barcodescanner.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -55,56 +58,58 @@ public class HourListAdapter extends ArrayAdapter<RecordedConnection> {
             Button resetButton = view.findViewById(R.id.resetButton);
 
             attackButton.setOnClickListener(viewButton -> {
-                attackButton.setChecked(true);
-                incertButton.setChecked(false);
-                normalButton.setChecked(false);
                 recordedConnection.setConnectionStatus(ConnectionStatus.ATTACK);
+                updateButtons(recordedConnection, attackButton, incertButton, normalButton, hourField);
                 resetButton.setEnabled(true);
             });
 
             incertButton.setOnClickListener(viewButton -> {
-                attackButton.setChecked(false);
-                incertButton.setChecked(true);
-                normalButton.setChecked(false);
                 recordedConnection.setConnectionStatus(ConnectionStatus.INCERT);
+                updateButtons(recordedConnection, attackButton, incertButton, normalButton, hourField);
                 resetButton.setEnabled(true);
             });
 
             normalButton.setOnClickListener(viewButton -> {
-                attackButton.setChecked(false);
-                incertButton.setChecked(false);
-                normalButton.setChecked(true);
                 recordedConnection.setConnectionStatus(ConnectionStatus.NORMAL);
+                updateButtons(recordedConnection, attackButton, incertButton, normalButton, hourField);
                 resetButton.setEnabled(true);
             });
 
             resetButton.setOnClickListener(v -> {
-                recordedConnection.setConnectionStatus( recordedConnection.getInitialConnectionStatus());
+                recordedConnection.setConnectionStatus(recordedConnection.getInitialConnectionStatus());
                 resetButton.setEnabled(false);
-                updateButtons(recordedConnection, attackButton, incertButton, normalButton);
+                updateButtons(recordedConnection, attackButton, incertButton, normalButton, hourField);
+
             });
 
-            updateButtons(recordedConnection, attackButton, incertButton, normalButton);
+            updateButtons(recordedConnection, attackButton, incertButton, normalButton, hourField);
+
+            ImageView countryImage = view.findViewById(R.id.countryImage);
+            int id = mContext.getResources().getIdentifier(recordedConnection.getCountry().getField().toLowerCase(), "drawable", mContext.getPackageName());
+            countryImage.setImageResource(id);
         }
         return view;
     }
 
-    private void updateButtons(RecordedConnection recordedConnection, ToggleButton attackButton, ToggleButton incertButton, ToggleButton normalButton) {
+    private void updateButtons(RecordedConnection recordedConnection, ToggleButton attackButton, ToggleButton incertButton, ToggleButton normalButton, TextView hourField) {
         switch (recordedConnection.getConnectionStatus()) {
             case NORMAL:
                 attackButton.setChecked(false);
                 incertButton.setChecked(false);
                 normalButton.setChecked(true);
+                hourField.setTextColor(ColorStateList.valueOf(0xff33b5e5));
                 break;
             case INCERT:
                 attackButton.setChecked(false);
                 incertButton.setChecked(true);
                 normalButton.setChecked(false);
+                hourField.setTextColor(Color.GRAY);
                 break;
             case ATTACK:
                 attackButton.setChecked(true);
                 incertButton.setChecked(false);
                 normalButton.setChecked(false);
+                hourField.setTextColor(Color.RED);
                 break;
         }
     }
