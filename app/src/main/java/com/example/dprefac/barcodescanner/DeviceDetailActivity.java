@@ -44,6 +44,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
         dateElementList.add(dateElement3);
         dateElementList.add(dateElement3);
         dateElementList.add(dateElement4);
+
         DateListAdapter dateListAdapter = new DateListAdapter(this, R.layout.activity_list_date_view, dateElementList);
         dateListView = findViewById(R.id.dateList);
         dateListView.setAdapter(dateListAdapter);
