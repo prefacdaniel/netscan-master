@@ -35,10 +35,10 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="50sp"
-        android:gravity="start"
         android:layout_height="50sp"
         android:layout_weight="0"
-        app:srcCompat="@mipmap/ic_launcher"
+        android:gravity="start"
+        app:srcCompat="@drawable/alert"
         tools:layout_weight="2" />
 
 </LinearLayout>

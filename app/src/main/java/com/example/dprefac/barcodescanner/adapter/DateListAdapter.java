@@ -1,12 +1,15 @@
 package com.example.dprefac.barcodescanner.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.dprefac.barcodescanner.DailyDetailsActivity;
+import com.example.dprefac.barcodescanner.DeviceDetailActivity;
 import com.example.dprefac.barcodescanner.R;
 import com.example.dprefac.barcodescanner.model.DateElement;
 
@@ -36,6 +39,10 @@ public class DateListAdapter extends ArrayAdapter<DateElement> {
             LayoutInflater vi;
             vi = LayoutInflater.from(mContext);
             v = vi.inflate(resourceLayout, null);
+            v.setOnClickListener(v1 -> {
+                Intent intent = new Intent(mContext, DailyDetailsActivity.class);
+                mContext.startActivity(intent);
+            });
         }
 
         DateElement dateElement = getItem(position);

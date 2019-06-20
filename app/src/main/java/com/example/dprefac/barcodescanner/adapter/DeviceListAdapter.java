@@ -1,13 +1,16 @@
 package com.example.dprefac.barcodescanner.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.dprefac.barcodescanner.DeviceDetailActivity;
 import com.example.dprefac.barcodescanner.R;
 import com.example.dprefac.barcodescanner.model.Device;
 import com.example.dprefac.barcodescanner.model.DeviceStatus;
@@ -37,10 +40,15 @@ public class DeviceListAdapter extends ArrayAdapter<Device> {
 
         View v = convertView;
 
+
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(mContext);
             v = vi.inflate(resourceLayout, null);
+            v.setOnClickListener(v1 -> {
+                Intent intent = new Intent(mContext, DeviceDetailActivity.class);
+                mContext.startActivity(intent);
+            });
         }
 
         Device device = getItem(position);
@@ -63,7 +71,18 @@ public class DeviceListAdapter extends ArrayAdapter<Device> {
                     deviceStatus.setTextColor(Color.RED);
                 }
             }
+            ImageView imageView = v.findViewById(R.id.deviceSmallImage);
 
+            int imageResourceId = 0;
+
+            if (device.getId() == 1) {
+                imageResourceId = mContext.getResources().getIdentifier("webcam1", "drawable", mContext.getPackageName());
+            } else if (device.getId() == 2) {
+                imageResourceId = mContext.getResources().getIdentifier("webcam2", "drawable", mContext.getPackageName());
+            } else if (device.getId() == 3) {
+                imageResourceId = mContext.getResources().getIdentifier("smartbulb", "drawable", mContext.getPackageName());
+            }
+            imageView.setImageResource(imageResourceId);
         }
         return v;
     }

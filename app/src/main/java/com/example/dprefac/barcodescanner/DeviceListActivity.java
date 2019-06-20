@@ -1,4 +1,4 @@
-package com.example.dprefac.barcodescanner.component;
+package com.example.dprefac.barcodescanner;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
