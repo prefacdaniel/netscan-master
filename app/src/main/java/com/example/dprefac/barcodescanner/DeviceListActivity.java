@@ -1,7 +1,9 @@
 package com.example.dprefac.barcodescanner;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.dprefac.barcodescanner.R;
@@ -17,6 +19,9 @@ public class DeviceListActivity extends AppCompatActivity {
 
 
     private ListView devicesListView;
+    private Button addDeviceButton;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,5 +50,11 @@ public class DeviceListActivity extends AppCompatActivity {
 
         DeviceListAdapter deviceListAdapter = new DeviceListAdapter(this,R.layout.activity_list_view_devices,deviceList);
         devicesListView.setAdapter(deviceListAdapter);
+
+        addDeviceButton = findViewById(R.id.addDeviceButtonList);
+        addDeviceButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), AddDeviceActivity.class);
+            getApplicationContext().startActivity(intent);
+        });
     }
 }
