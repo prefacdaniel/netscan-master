@@ -9,6 +9,8 @@ public class Device {
     private int id;
     private String name;
     private DeviceStatus status;
+    private String ip;
+    private int port;
     private byte[] image;
 
     public int getId() {
@@ -41,5 +43,21 @@ public class Device {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

@@ -1,13 +1,15 @@
 package com.example.dprefac.barcodescanner.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by dprefac on 20-Jun-19.
  */
 
 public enum DeviceStatus {
 
-    CONNECTED("Connected"),
-    DISCONNECTED("Disconnected");
+    @SerializedName("Connected")CONNECTED("Connected"),
+    @SerializedName("Disconnected")DISCONNECTED("Disconnected");
 
 
     private String field;
