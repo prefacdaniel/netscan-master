@@ -127,8 +127,37 @@ def get_server_by_id(server_id):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM server WHERE id = " + server_id)
     rows = cursor.fetchall()
-    server = Server(id=rows[0][0], ip=rows[0][1], port=rows[0][2])
+    server = Server(id=rows[0][0], ip=rows[0][1], port=rows[0][2], name=rows[0][3], status=rows[0][4], image=rows[0][5])
     return server
+
+
+def get_all_servers():
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM server")
+    rows = cursor.fetchall()
+    servers = []
+    for row in rows:
+        server = Server(id=row[0], ip=row[1], port=row[2], name=row[3], status=row[4], image=row[5])
+        servers.append(server)
+    return servers
+
+
+def save_server(server):
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO server VALUES (NULL,?,?,?,?,?)',
+                   (
+                       server.ip,
+                       server.port,
+                       server.name,
+                       server.status,
+                       server.image
+                   ))
+    last_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return last_id
 
 
 def query_db(query, args=(), one=False):
@@ -147,3 +176,5 @@ def query_db_get_json(query, args=()):
 
 
 print(query_db_get_json("SELECT * FROM feature"))
+
+

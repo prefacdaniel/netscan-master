@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.externals import joblib
 from model.Training import Training
 import repository.database_connection as db
-from DataNormalisation import eliminate_outlier_with_z_score, normalise_data_set, normalise_training_data_set
+from DataNormalisation import eliminate_outlier_with_z_score, standardize_data_set, normalise_training_data_set
 from algorithms.isolation_forest import train_isolation_forest
 from model.TrainingElement import TrainingElement
 from utils.utils import get_current_time_millis
@@ -20,7 +20,7 @@ def load_and_prepare_training_data(feature_vectors, utilised_columns, columns_to
     training_data = np.array(training_data).astype(np.float64)  # convert to numpy float
     training_data = np.array(eliminate_outlier_with_z_score(training_data, m=2))  # eliminate outlire
     for column in columns_to_standardise:  # standardise data set
-        training_data[:, column], data_set_mean, data_set_std = normalise_data_set(training_data[:, column])
+        training_data[:, column], data_set_mean, data_set_std = standardize_data_set(training_data[:, column])
         modified_column.append([column, data_set_mean, data_set_std])
     return training_data, modified_column
 
@@ -93,17 +93,17 @@ def evaluate_model(model, test_feature_vectors, training_data, modified_columns)
 
     # print(y_pred_train)
     print(y_pred_test)
-    print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])
+    print("Accuracy on training:", list(y_pred_train).count(1) / y_pred_test.shape[0])
     # # Accuracy: 0.93
     # outliers ----
-    print("Accuracy:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
+    print("Accuracy on test:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
     # //-------------
     y_pred_train = model.predict(training_data)
     y_pred_test = model.predict(test_data)
-    TP = list(y_pred_train).count(1) -5
-    FP = list(y_pred_test).count(1) +5
-    FN = list(y_pred_train).count(-1)+5
-    TN = list(y_pred_test).count(-1)-5
+    TP = list(y_pred_train).count(1) - 5
+    FP = list(y_pred_test).count(1) + 5
+    FN = list(y_pred_train).count(-1) + 5
+    TN = list(y_pred_test).count(-1) - 5
 
     TPF = TP / (TP + FN)
     FNF = FN / (TP + FN)
@@ -112,11 +112,16 @@ def evaluate_model(model, test_feature_vectors, training_data, modified_columns)
     PPV = TP / (TP + FP)
     NPV = TN / (TN + FN)
     # print(y_pred_train)
-    print(y_pred_test)
-    print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])
-    # # Accuracy: 0.93
-    # outliers ----
-    print("Accuracy:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
+    # print(y_pred_test)
+    # print("Accuracy:", list(y_pred_train).count(1) / y_pred_test.shape[0])
+    #
+    # print("Accuracy:", list(y_pred_outliers).count(-1) / y_pred_outliers.shape[0])
+
+    print("TPF: ", TPF)
+    print("FNF: ", FNF)
+    print("TNF: ", TNF)
+    print("FPF: ", FPF)
+
 
 
 def get_modified_columns_str(modified_columns):
@@ -151,6 +156,20 @@ def load_active_trainings():
         key = str(server.ip) + ":" + str(server.port)
         running_active_trainings[key] = running_active_training
         print("done")
+
+
+def evaluate_and_save_feature_status(model, test_feature_vectors, modified_columns):
+    #TODO NOT DONE YET !!
+    for feature_vector in test_feature_vectors:
+        test_data = load_and_prepare_test_data(feature_vectors=(feature_vector), modified_columns=modified_columns)
+    test_result = model.predict(test_data)
+
+
+# load_active_trainings()
+# model, utilised_columns, modified_columns, training = running_active_trainings['192.168.0.100:9999']
+#
+# evaluate_and_save_feature_status(model=model, test_feature_vectors=test_feature_vectors,
+#                                  modified_columns=modified_columns)
 
 
 load_active_trainings()

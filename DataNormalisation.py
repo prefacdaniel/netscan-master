@@ -13,7 +13,7 @@ def eliminate_outlier_with_z_score(data_1, m=2):
     return data
 
 
-def normalise_data_set(data_set):
+def standardize_data_set(data_set):
     data_set_mean = data_set.mean(axis=0)
     data_set_std = data_set.std(axis=0)
     if data_set_std == 0: data_set_std = 1
