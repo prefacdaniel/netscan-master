@@ -7,7 +7,7 @@
     tools:context="com.example.dprefac.barcodescanner.AddDeviceActivity">
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/addImageButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="36dp"
@@ -17,7 +17,7 @@
         app:srcCompat="@android:drawable/ic_menu_add" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/deviceNameAddDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -26,10 +26,10 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton" />
+        app:layout_constraintTop_toBottomOf="@+id/addImageButton" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/ipFieldAddDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -38,19 +38,19 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/deviceNameAddDevice" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/portFieldAddDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Port"
-        android:inputType="textPersonName"
+        android:inputType="numberSigned"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintTop_toBottomOf="@+id/ipFieldAddDevice" />
 
     <Button
         android:id="@+id/saveDevice"
@@ -60,5 +60,5 @@
         android:text="Save device"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintTop_toBottomOf="@+id/portFieldAddDevice" />
 </android.support.constraint.ConstraintLayout>

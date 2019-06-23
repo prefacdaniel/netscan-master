@@ -11,7 +11,7 @@ public class Device {
     private DeviceStatus status;
     private String ip;
     private int port;
-    private byte[] image;
+    private String image; //Base64 pls
 
     public int getId() {
         return id;
@@ -37,11 +37,11 @@ public class Device {
         this.status = status;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
