@@ -175,6 +175,19 @@ def query_db_get_json(query, args=()):
     return json.dumps(my_query)
 
 
+def get_device_data_by_id(device_id):
+    query = "select date dateString, count(b.evaluation) attacksNumber " \
+            "from server, feature " \
+            "left join (Select st.evaluation, st.feature_id " \
+            "from training t, active_training at,  status st " \
+            "where t.id = at.training_id " \
+            "and t.id = st.training_id " \
+            "and st.evaluation = \"attack\") b " \
+            "on feature_id = b.feature_id " \
+            "where server.id = feature.server_id " \
+            "and server.id = ? " \
+            "group by feature.date, b.evaluation "
+    return query_db_get_json(query, device_id)
+
+
 print(query_db_get_json("SELECT * FROM feature"))
-
-
