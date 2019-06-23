@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dprefac.barcodescanner.DeviceDetailActivity;
 import com.example.dprefac.barcodescanner.R;
@@ -40,18 +41,24 @@ public class DeviceListAdapter extends ArrayAdapter<Device> {
 
         View v = convertView;
 
+        Device device = getItem(position);
 
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(mContext);
             v = vi.inflate(resourceLayout, null);
             v.setOnClickListener(v1 -> {
-                Intent intent = new Intent(mContext, DeviceDetailActivity.class);
-                mContext.startActivity(intent);
+                if (device != null) {
+                    Intent intent = new Intent(mContext, DeviceDetailActivity.class);
+                    intent.putExtra("DEVICE_ID", device.getId());
+                    intent.putExtra("DEVICE_NAME", device.getName());
+                    intent.putExtra("DEVICE_IMAGE", device.getImage());
+                    mContext.startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(), "Device not found !!", Toast.LENGTH_LONG).show();
+                }
             });
         }
-
-        Device device = getItem(position);
 
         if (device != null) {
             TextView deviceNameTextView = v.findViewById(R.id.list_view_device_name);

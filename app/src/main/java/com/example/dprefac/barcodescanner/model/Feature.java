@@ -1,4 +1,4 @@
-package com.example.dprefac.barcodescanner.dto;
+package com.example.dprefac.barcodescanner.model;
 
 /**
  * Created by dprefac on 22-May-19.

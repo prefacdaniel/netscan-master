@@ -1,6 +1,6 @@
 package com.example.dprefac.barcodescanner.component;
 
-import com.example.dprefac.barcodescanner.dto.Feature;
+import com.example.dprefac.barcodescanner.model.Feature;
 
 import java.util.List;
 

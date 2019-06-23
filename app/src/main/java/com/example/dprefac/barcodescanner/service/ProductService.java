@@ -1,6 +1,6 @@
 package com.example.dprefac.barcodescanner.service;
 
-import com.example.dprefac.barcodescanner.dto.Feature;
+import com.example.dprefac.barcodescanner.model.Feature;
 import com.example.dprefac.barcodescanner.model.Product;
 
 import java.util.List;
