@@ -190,4 +190,19 @@ def get_device_data_by_id(device_id):
     return query_db_get_json(query, device_id)
 
 
+def get_connection_for_device_from_date_from_db(device_id, date):
+    query = "select feature.id, time, country, feature.status connectionStatusFromUser, b.evaluation " \
+            "connectionStatusFromAlgorithm " \
+            "from server, feature " \
+            "left join (Select st.evaluation, st.feature_id " \
+            "            from training t, active_training at,  status st " \
+            "            where t.id = at.training_id " \
+            "            and t.id = st.training_id) b " \
+            "    on feature_id = b.feature_id " \
+            "where server.id = feature.server_id " \
+            "and server.id = ?" \
+            "and date = ?"
+    return query_db_get_json(query, (device_id, date))
+
+
 print(query_db_get_json("SELECT * FROM feature"))

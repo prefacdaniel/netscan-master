@@ -1,10 +1,10 @@
 import json
-from pickle import PUT
 
 from flask import Flask, Response, request
 
 from model.Server import Server
-from repository.database_connection import query_db_get_json, save_server, get_device_data_by_id
+from repository.database_connection import query_db_get_json, save_server, get_device_data_by_id, \
+    get_connection_for_device_from_date_from_db
 
 app = Flask(__name__)
 
@@ -44,6 +44,13 @@ def add_server():
 @app.route("/date/<deviceid>", methods=['GET'])
 def get_dates_for_device(deviceid):
     json_feature = get_device_data_by_id(deviceid)
+    return Response(json_feature, status=200, mimetype='application/json')
+
+
+@app.route("/connections/<deviceid>/<date>", methods=['GET'])
+def get_connection_for_device_from_date(deviceid, date):
+    date = date.replace("_", "/")
+    json_feature = get_connection_for_device_from_date_from_db(deviceid, date)
     return Response(json_feature, status=200, mimetype='application/json')
 
 
