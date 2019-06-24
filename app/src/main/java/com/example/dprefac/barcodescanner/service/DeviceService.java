@@ -28,5 +28,8 @@ public interface DeviceService {
     Call<List<DateElement>> getDatesForDevice(@Path("deviceId") int device);
 
     @GET("/connections/{deviceId}/{date}")
-    Call<List<RecordedConnection>> getDailyAcitivyForADevice(@Path("deviceId") int device, @Path("date") String date);
+    Call<List<RecordedConnection>> getDailyActivityForADevice(@Path("deviceId") int device, @Path("date") String date);
+
+    @POST("/statusupdate")
+    Call<Void> updateConnectionStatus(@Body List<RecordedConnection> recordedConnectionList);
 }
