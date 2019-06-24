@@ -40,6 +40,7 @@ def add_server():
     server_id = save_server(server)
     return Response(server_id, status=200, mimetype='application/json')
 
+
 @app.route("/date/<deviceid>", methods=['GET'])
 def get_dates_for_device(deviceid):
     json_feature = get_device_data_by_id(deviceid)
