@@ -4,13 +4,11 @@ import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.dprefac.barcodescanner.exception.IncompleteRequestException;
 import com.example.dprefac.barcodescanner.model.Device;
 import com.example.dprefac.barcodescanner.model.DeviceStatus;
 
@@ -43,7 +41,7 @@ public class AddDeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_device);
 
         imageButton = findViewById(R.id.addImageButton);
-        deviceName = findViewById(R.id.deviceNameAddDevice);
+        deviceName = findViewById(R.id.deviceNameDaily);
         ipField = findViewById(R.id.ipFieldAddDevice);
         port = findViewById(R.id.portFieldAddDevice);
         saveDevice = findViewById(R.id.saveDevice);

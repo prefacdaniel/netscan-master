@@ -24,15 +24,22 @@ public class DateListAdapter extends ArrayAdapter<DateElement> {
 
     private int resourceLayout;
     private Context mContext;
+    private int deviceId;
+    private String deviceName;
+    private String deviceImage;
 
-    public DateListAdapter(Context context, int resource, List<DateElement> items) {
+    public DateListAdapter(Context context, int resource, List<DateElement> items, int deviceId, String deviceName, String deviceImage) {
         super(context, resource, items);
         this.resourceLayout = resource;
         this.mContext = context;
+        this.deviceId = deviceId;
+        this.deviceName = deviceName;
+        this.deviceImage = deviceImage;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        DateElement dateElement = getItem(position);
 
         View v = convertView;
 
@@ -41,12 +48,17 @@ public class DateListAdapter extends ArrayAdapter<DateElement> {
             vi = LayoutInflater.from(mContext);
             v = vi.inflate(resourceLayout, null);
             v.setOnClickListener(v1 -> {
-                Intent intent = new Intent(mContext, DailyDetailsActivity.class);
-                mContext.startActivity(intent);
+                if (dateElement != null) {
+                    Intent intent = new Intent(mContext, DailyDetailsActivity.class);
+                    intent.putExtra("DEVICE_ID", deviceId);
+                    intent.putExtra("DEVICE_NAME", deviceName);
+                    intent.putExtra("DEVICE_IMAGE", deviceImage);
+                    intent.putExtra("DATE_DATA", dateElement.getDateString());
+                    mContext.startActivity(intent);
+                }
             });
         }
 
-        DateElement dateElement = getItem(position);
 
         if (dateElement != null) {
             TextView dateStringView = v.findViewById(R.id.dateString);
@@ -64,7 +76,7 @@ public class DateListAdapter extends ArrayAdapter<DateElement> {
                     attacksNumberView.setText(attacksNumber + " attacks!");
                     attacksNumberView.setTextColor(Color.RED);
                     attackImageView.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     attackImageView.setVisibility(View.INVISIBLE);
                     attacksNumberView.setText("Nothing suspicious");
                     attacksNumberView.setTextColor(Color.BLUE);

@@ -17,7 +17,7 @@
         app:srcCompat="@android:drawable/ic_menu_add" />
 
     <EditText
-        android:id="@+id/deviceNameAddDevice"
+        android:id="@+id/deviceNameDaily"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -38,7 +38,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deviceNameAddDevice" />
+        app:layout_constraintTop_toBottomOf="@+id/deviceNameDaily" />
 
     <EditText
         android:id="@+id/portFieldAddDevice"

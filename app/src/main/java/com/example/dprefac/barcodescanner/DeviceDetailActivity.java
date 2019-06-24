@@ -10,12 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dprefac.barcodescanner.adapter.DateListAdapter;
-import com.example.dprefac.barcodescanner.adapter.DeviceListAdapter;
 import com.example.dprefac.barcodescanner.model.DateElement;
-import com.example.dprefac.barcodescanner.model.Device;
-import com.example.dprefac.barcodescanner.model.RecordedConnection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -36,9 +32,9 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private ListView dateListView;
     private TextView deviceNameTextView;
 
-    private  int deviceId;
-    private  String deviceName;
-    private  String deviceImage;
+    private int deviceId;
+    private String deviceName;
+    private String deviceImage;
 
     private boolean isListLoaded = false;
 
@@ -53,7 +49,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
 
         dateListView = findViewById(R.id.dateList);
-        deviceNameTextView = findViewById(R.id.deviceNameAddDevice);
+        deviceNameTextView = findViewById(R.id.deviceNameDaily);
 
         //todo: set device image
         deviceNameTextView.setText(deviceName);
@@ -74,7 +70,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
                     List<DateElement> products = response.body();
                     if (products != null && !products.isEmpty()) {
-                        DateListAdapter dateListAdapter = new DateListAdapter(getApplicationContext(), R.layout.activity_list_date_view, products);
+                        DateListAdapter dateListAdapter = new DateListAdapter(getApplicationContext(), R.layout.activity_list_date_view, products, deviceId, deviceName, deviceName);
                         dateListView.setAdapter(dateListAdapter);
                     } else {
                         Toast.makeText(DeviceDetailActivity.this, "List is empty!", Toast.LENGTH_LONG).show();

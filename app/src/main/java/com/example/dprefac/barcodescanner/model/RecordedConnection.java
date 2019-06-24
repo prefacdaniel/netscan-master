@@ -5,11 +5,11 @@ package com.example.dprefac.barcodescanner.model;
  */
 
 public class RecordedConnection {
+    private String id;
     private Country country;
-    private ConnectionStatus connectionStatus;
-    private ConnectionStatus initialConnectionStatus;
-    private int hour;
-    private int minute;
+    private ConnectionStatus connectionStatusFromUser;
+    private ConnectionStatus connectionStatusFromAlgorithm;
+    private String time;
 
 
     public Country getCountry() {
@@ -20,35 +20,35 @@ public class RecordedConnection {
         this.country = country;
     }
 
-    public ConnectionStatus getConnectionStatus() {
-        return connectionStatus;
+    public ConnectionStatus getConnectionStatusFromUser() {
+        return connectionStatusFromUser;
     }
 
-    public void setConnectionStatus(ConnectionStatus connectionStatus) {
-        this.connectionStatus = connectionStatus;
+    public void setConnectionStatusFromUser(ConnectionStatus connectionStatusFromUser) {
+        this.connectionStatusFromUser = connectionStatusFromUser;
     }
 
-    public int getHour() {
-        return hour;
+    public String getTime() {
+        return time;
     }
 
-    public void setHour(int hour) {
-        this.hour = hour;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public int getMinute() {
-        return minute;
+    public ConnectionStatus getConnectionStatusFromAlgorithm() {
+        return connectionStatusFromAlgorithm;
     }
 
-    public void setMinute(int minute) {
-        this.minute = minute;
+    public void setConnectionStatusFromAlgorithm(ConnectionStatus connectionStatusFromAlgorithm) {
+        this.connectionStatusFromAlgorithm = connectionStatusFromAlgorithm;
     }
 
-    public ConnectionStatus getInitialConnectionStatus() {
-        return initialConnectionStatus;
+    public String getId() {
+        return id;
     }
 
-    public void setInitialConnectionStatus(ConnectionStatus initialConnectionStatus) {
-        this.initialConnectionStatus = initialConnectionStatus;
+    public void setId(String id) {
+        this.id = id;
     }
 }

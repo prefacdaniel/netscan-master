@@ -2,6 +2,7 @@ package com.example.dprefac.barcodescanner.service;
 
 import com.example.dprefac.barcodescanner.model.DateElement;
 import com.example.dprefac.barcodescanner.model.Device;
+import com.example.dprefac.barcodescanner.model.RecordedConnection;
 
 import java.util.List;
 
@@ -25,4 +26,7 @@ public interface DeviceService {
 
     @GET("/date/{deviceId}")
     Call<List<DateElement>> getDatesForDevice(@Path("deviceId") int device);
+
+    @GET("/connections/{deviceId}/{date}")
+    Call<List<RecordedConnection>> getDailyAcitivyForADevice(@Path("deviceId") int device, @Path("date") String date);
 }

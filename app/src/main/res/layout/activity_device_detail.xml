@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="50dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/newTrainingButton"
+        app:layout_constraintBottom_toBottomOf="@id/updateConnectionStatusButton"
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
@@ -23,7 +23,7 @@
 
 
             <ImageView
-                android:id="@+id/deviceIcon"
+                android:id="@+id/deviceIconDaily"
                 android:layout_width="72sp"
                 android:layout_height="72sp"
                 android:layout_marginStart="156dp"
@@ -33,7 +33,7 @@
                 app:srcCompat="@drawable/webcam1" />
 
             <TextView
-                android:id="@+id/deviceNameAddDevice"
+                android:id="@+id/deviceNameDaily"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="104dp"
@@ -42,7 +42,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/deviceIcon" />
+                app:layout_constraintTop_toBottomOf="@+id/deviceIconDaily" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -54,7 +54,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/newTrainingButton"
+        android:id="@+id/updateConnectionStatusButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
