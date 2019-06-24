@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dprefac.barcodescanner.adapter.DateListAdapter;
@@ -29,9 +30,11 @@ import static com.example.dprefac.barcodescanner.config.Configuration.deviceServ
 
 public class DeviceDetailActivity extends AppCompatActivity {
 
-    private ListView dateListView;
+
     private final String TAG = this.getClass().getName();
 
+    private ListView dateListView;
+    private TextView deviceNameTextView;
 
     private  int deviceId;
     private  String deviceName;
@@ -49,35 +52,11 @@ public class DeviceDetailActivity extends AppCompatActivity {
         deviceImage = getIntent().getStringExtra("DEVICE_IMAGE");
 
 
-        DateElement dateElement1 = new DateElement();
-        dateElement1.setDateString("5/5/2019");
-        dateElement1.setAttacksNumber(32);
-        DateElement dateElement2 = new DateElement();
-        dateElement2.setDateString("6/5/2019");
-        dateElement2.setAttacksNumber(32);
-        DateElement dateElement3 = new DateElement();
-        dateElement3.setDateString("17/6/2019");
-        dateElement3.setAttacksNumber(32);
-        DateElement dateElement4 = new DateElement();
-        dateElement4.setDateString("18/6/2019");
-        dateElement4.setAttacksNumber(32);
-
-
-        List<DateElement> dateElementList = new ArrayList<>();
-        dateElementList.add(dateElement1);
-        dateElementList.add(dateElement2);
-        dateElementList.add(dateElement3);
-        dateElementList.add(dateElement3);
-        dateElementList.add(dateElement3);
-        dateElementList.add(dateElement3);
-        dateElementList.add(dateElement3);
-        dateElementList.add(dateElement3);
-        dateElementList.add(dateElement3);
-        dateElementList.add(dateElement4);
-
-        DateListAdapter dateListAdapter = new DateListAdapter(this, R.layout.activity_list_date_view, dateElementList);
         dateListView = findViewById(R.id.dateList);
-        dateListView.setAdapter(dateListAdapter);
+        deviceNameTextView = findViewById(R.id.deviceNameAddDevice);
+
+        //todo: set device image
+        deviceNameTextView.setText(deviceName);
     }
 
     private void downloadDeviceActivities() {

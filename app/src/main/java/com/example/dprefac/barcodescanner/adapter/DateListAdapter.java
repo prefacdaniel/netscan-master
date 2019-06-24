@@ -2,14 +2,15 @@ package com.example.dprefac.barcodescanner.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dprefac.barcodescanner.DailyDetailsActivity;
-import com.example.dprefac.barcodescanner.DeviceDetailActivity;
 import com.example.dprefac.barcodescanner.R;
 import com.example.dprefac.barcodescanner.model.DateElement;
 
@@ -54,8 +55,20 @@ public class DateListAdapter extends ArrayAdapter<DateElement> {
             if (dateStringView != null) {
                 dateStringView.setText(dateElement.getDateString());
             }
+
+            ImageView attackImageView = v.findViewById(R.id.attackImageView);
+
             if (attacksNumberView != null) {
-                attacksNumberView.setText(dateElement.getAttacksNumber() + " attacks!");
+                int attacksNumber = dateElement.getAttacksNumber();
+                if (attacksNumber > 0) {
+                    attacksNumberView.setText(attacksNumber + " attacks!");
+                    attacksNumberView.setTextColor(Color.RED);
+                    attackImageView.setVisibility(View.VISIBLE);
+                }else{
+                    attackImageView.setVisibility(View.INVISIBLE);
+                    attacksNumberView.setText("Nothing suspicious");
+                    attacksNumberView.setTextColor(Color.BLUE);
+                }
             }
         }
         return v;

@@ -33,7 +33,7 @@
         android:textStyle="bold|italic" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/attackImageView"
         android:layout_width="50sp"
         android:layout_height="50sp"
         android:layout_weight="0"
