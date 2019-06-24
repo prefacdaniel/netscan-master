@@ -4,7 +4,7 @@ from flask import Flask, Response, request
 
 from model.Server import Server
 from repository.database_connection import query_db_get_json, save_server, get_device_data_by_id, \
-    get_connection_for_device_from_date_from_db
+    get_connection_for_device_from_date_from_db, update_connection_status_in_db
 
 app = Flask(__name__)
 
@@ -53,6 +53,13 @@ def get_connection_for_device_from_date(deviceid, date):
     json_feature = get_connection_for_device_from_date_from_db(deviceid, date)
     return Response(json_feature, status=200, mimetype='application/json')
 
+
+@app.route('/statusupdate', methods=['POST'])
+def update_connection_status():
+    data = request.data
+    data = json.loads(data)
+    updated_connections_number = update_connection_status_in_db(data)
+    return Response(updated_connections_number, status=200, mimetype='application/json')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

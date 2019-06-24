@@ -205,4 +205,18 @@ def get_connection_for_device_from_date_from_db(device_id, date):
     return query_db_get_json(query, (device_id, date))
 
 
+def update_connection_status_in_db(data):
+    query = "UPDATE feature " \
+            "   SET status = ? " \
+            " WHERE id = ?;"
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+
+    for connection_element in data:
+        cursor.execute(query, (connection_element["connectionStatusFromUser"], connection_element["id"]))
+
+    conn.commit()
+    conn.close()
+
+
 print(query_db_get_json("SELECT * FROM feature"))
