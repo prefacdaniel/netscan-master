@@ -76,7 +76,7 @@ public class HourListAdapter extends ArrayAdapter<RecordedConnection> {
             });
 
             resetButton.setOnClickListener(v -> {
-                recordedConnection.setConnectionStatusFromUser(recordedConnection.getConnectionStatusFromAlgorithm()); //todo this might not work anymore
+                recordedConnection.setConnectionStatusFromUser(recordedConnection.getConnectionStatusFromAlgorithm());
                 resetButton.setEnabled(false);
                 updateButtons(recordedConnection, attackButton, incertButton, normalButton, hourField);
 
@@ -92,6 +92,10 @@ public class HourListAdapter extends ArrayAdapter<RecordedConnection> {
     }
 
     private void updateButtons(RecordedConnection recordedConnection, ToggleButton attackButton, ToggleButton incertButton, ToggleButton normalButton, TextView hourField) {
+        if(recordedConnection.getConnectionStatusFromAlgorithm() == null){
+            recordedConnection.setConnectionStatusFromAlgorithm(recordedConnection.getConnectionStatusFromUser());
+        }
+
         switch (recordedConnection.getConnectionStatusFromUser()) {
             case NORMAL:
                 attackButton.setChecked(false);
