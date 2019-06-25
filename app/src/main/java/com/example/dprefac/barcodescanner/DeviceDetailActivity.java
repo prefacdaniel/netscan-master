@@ -1,10 +1,12 @@
 package com.example.dprefac.barcodescanner;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,7 +37,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private ListView dateListView;
     private TextView deviceNameTextView;
     private ImageView deviceIconDaily;
-
+    private Button startTraining;
 
     private int deviceId;
     private String deviceName;
@@ -56,6 +58,12 @@ public class DeviceDetailActivity extends AppCompatActivity {
         dateListView = findViewById(R.id.dateList);
         deviceNameTextView = findViewById(R.id.deviceNameDetails);
         deviceIconDaily = findViewById(R.id.deviceIconDetails);
+        startTraining = findViewById(R.id.startTraining);
+
+        startTraining.setOnClickListener(view ->{
+            Intent intent = new Intent(getApplicationContext(), NewTrainingActivity.class);
+            getApplicationContext().startActivity(intent);
+        });
 
         deviceIconDaily.setImageBitmap(Utils.base64StringToBitmap(deviceImage));
         deviceNameTextView.setText(deviceName);
