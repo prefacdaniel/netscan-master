@@ -2,7 +2,10 @@ package com.example.dprefac.barcodescanner.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import com.example.dprefac.barcodescanner.DeviceDetailActivity;
 import com.example.dprefac.barcodescanner.R;
 import com.example.dprefac.barcodescanner.model.Device;
 import com.example.dprefac.barcodescanner.model.DeviceStatus;
+import com.example.dprefac.barcodescanner.util.Utils;
 
 import java.util.List;
 
@@ -80,16 +84,7 @@ public class DeviceListAdapter extends ArrayAdapter<Device> {
             }
             ImageView imageView = v.findViewById(R.id.deviceSmallImage);
 
-            int imageResourceId = 0;
-
-            if (device.getId() == 1) {
-                imageResourceId = mContext.getResources().getIdentifier("webcam1", "drawable", mContext.getPackageName());
-            } else if (device.getId() == 2) {
-                imageResourceId = mContext.getResources().getIdentifier("webcam2", "drawable", mContext.getPackageName());
-            } else if (device.getId() == 3) {
-                imageResourceId = mContext.getResources().getIdentifier("smartbulb", "drawable", mContext.getPackageName());
-            }
-            imageView.setImageResource(imageResourceId);
+            imageView.setImageBitmap( Utils.base64StringToBitmap(device.getImage()));
         }
         return v;
     }

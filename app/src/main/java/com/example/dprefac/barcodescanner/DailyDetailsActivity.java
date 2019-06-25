@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.dprefac.barcodescanner.adapter.HourListAdapter;
 import com.example.dprefac.barcodescanner.model.RecordedConnection;
+import com.example.dprefac.barcodescanner.util.Utils;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +59,6 @@ public class DailyDetailsActivity extends AppCompatActivity {
         deviceImage = getIntent().getStringExtra("DEVICE_IMAGE");
         connectionsDate = getIntent().getStringExtra("DATE_DATA");
 
-
         deviceNameDaily = findViewById(R.id.deviceNameDaily);
         deviceIconDaily = findViewById(R.id.deviceIconDaily);
         deviceDateDaily = findViewById(R.id.deviceDateDaily);
@@ -66,7 +66,7 @@ public class DailyDetailsActivity extends AppCompatActivity {
         updateConnectionStatusButton = findViewById(R.id.updateConnectionStatusButton);
 
         deviceNameDaily.setText(deviceName);
-//        deviceIconDaily.setImageIcon();//todo
+        deviceIconDaily.setImageBitmap(Utils.base64StringToBitmap(deviceImage));
         deviceDateDaily.setText(connectionsDate);
 
         updateConnectionStatusButton.setOnClickListener(v -> {

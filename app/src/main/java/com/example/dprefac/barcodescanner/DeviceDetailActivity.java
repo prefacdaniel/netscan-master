@@ -5,12 +5,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dprefac.barcodescanner.adapter.DateListAdapter;
 import com.example.dprefac.barcodescanner.model.DateElement;
+import com.example.dprefac.barcodescanner.util.Utils;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,8 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
     private ListView dateListView;
     private TextView deviceNameTextView;
+    private ImageView deviceIconDaily;
+
 
     private int deviceId;
     private String deviceName;
@@ -50,9 +54,10 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
 
         dateListView = findViewById(R.id.dateList);
-        deviceNameTextView = findViewById(R.id.deviceNameDaily);
+        deviceNameTextView = findViewById(R.id.deviceNameDetails);
+        deviceIconDaily = findViewById(R.id.deviceIconDetails);
 
-        //todo: set device image
+        deviceIconDaily.setImageBitmap(Utils.base64StringToBitmap(deviceImage));
         deviceNameTextView.setText(deviceName);
     }
 
@@ -72,7 +77,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
                     List<DateElement> products = response.body();
                     if (products != null && !products.isEmpty()) {
                         Collections.sort(products);
-                        DateListAdapter dateListAdapter = new DateListAdapter(getApplicationContext(), R.layout.activity_list_date_view, products, deviceId, deviceName, deviceName);
+                        DateListAdapter dateListAdapter = new DateListAdapter(getApplicationContext(), R.layout.activity_list_date_view, products, deviceId, deviceName, deviceImage);
                         dateListView.setAdapter(dateListAdapter);
                     } else {
                         Toast.makeText(DeviceDetailActivity.this, "List is empty!", Toast.LENGTH_LONG).show();
