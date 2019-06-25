@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.dprefac.barcodescanner.adapter.HourListAdapter;
 import com.example.dprefac.barcodescanner.model.RecordedConnection;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -90,6 +91,7 @@ public class DailyDetailsActivity extends AppCompatActivity {
                 if (response.code() == HttpsURLConnection.HTTP_OK) {
                     recordedConnectionList = response.body();
                     if (recordedConnectionList != null && !recordedConnectionList.isEmpty()) {
+                        Collections.sort(recordedConnectionList);
                         HourListAdapter hourListAdapter = new HourListAdapter(DailyDetailsActivity.this, R.layout.activity_list_hour_elements, recordedConnectionList);
                         hourListView.setAdapter(hourListAdapter);
                     } else {

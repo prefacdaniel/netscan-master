@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.dprefac.barcodescanner.adapter.DateListAdapter;
 import com.example.dprefac.barcodescanner.model.DateElement;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -70,6 +71,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
                     List<DateElement> products = response.body();
                     if (products != null && !products.isEmpty()) {
+                        Collections.sort(products);
                         DateListAdapter dateListAdapter = new DateListAdapter(getApplicationContext(), R.layout.activity_list_date_view, products, deviceId, deviceName, deviceName);
                         dateListView.setAdapter(dateListAdapter);
                     } else {
