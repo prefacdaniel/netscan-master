@@ -62,6 +62,9 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
         startTraining.setOnClickListener(view ->{
             Intent intent = new Intent(getApplicationContext(), NewTrainingActivity.class);
+            intent.putExtra("DEVICE_ID", deviceId);
+            intent.putExtra("DEVICE_NAME", deviceName);
+            intent.putExtra("DEVICE_IMAGE", deviceImage);
             getApplicationContext().startActivity(intent);
         });
 
