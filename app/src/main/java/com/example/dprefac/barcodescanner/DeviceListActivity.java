@@ -46,49 +46,65 @@ public class DeviceListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
-        devicesListView = findViewById(R.id.deviceListView);
 
-        addDeviceButton = findViewById(R.id.addDeviceButtonList);
-        addDeviceButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), AddDeviceActivity.class);
-            getApplicationContext().startActivity(intent);
-        });
+        try {
+            devicesListView = findViewById(R.id.deviceListView);
+
+            addDeviceButton = findViewById(R.id.addDeviceButtonList);
+            addDeviceButton.setOnClickListener(v -> {
+                Intent intent = new Intent(getApplicationContext(), AddDeviceActivity.class);
+                getApplicationContext().startActivity(intent);
+            });
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 
 
     private void downloadDeviceList() {
-        Call<List<Device>> productCall = deviceService.getAllDevices();
-        ProgressDialog mDialog = new ProgressDialog(DeviceListActivity.this);
-        mDialog.setMessage("Please wait...");
-        mDialog.setCancelable(false);
-        mDialog.show();
+        try {
+            Call<List<Device>> productCall = deviceService.getAllDevices();
+            ProgressDialog mDialog = new ProgressDialog(DeviceListActivity.this);
+            mDialog.setMessage("Please wait...");
+            mDialog.setCancelable(false);
+            mDialog.show();
 
-        productCall.enqueue(new Callback<List<Device>>() {
-            @Override
-            public void onResponse(Call<List<Device>> call, Response<List<Device>> response) {
-                if (response.code() == HttpsURLConnection.HTTP_OK) {
+            productCall.enqueue(new Callback<List<Device>>() {
+                @Override
+                public void onResponse(Call<List<Device>> call, Response<List<Device>> response) {
+                    try {
+                        if (response.code() == HttpsURLConnection.HTTP_OK) {
 
-                    List<Device> products = response.body();
-                    if (products != null && !products.isEmpty()) {
-                        DeviceListAdapter deviceListAdapter = new DeviceListAdapter(getApplicationContext(), R.layout.activity_list_view_devices, products);
-                        devicesListView.setAdapter(deviceListAdapter);
-                    } else {
-                        Toast.makeText(DeviceListActivity.this, "List is empty!", Toast.LENGTH_LONG).show();
+                            List<Device> products = response.body();
+                            if (products != null && !products.isEmpty()) {
+                                DeviceListAdapter deviceListAdapter = new DeviceListAdapter(getApplicationContext(), R.layout.activity_list_view_devices, products);
+                                devicesListView.setAdapter(deviceListAdapter);
+                            } else {
+                                Toast.makeText(DeviceListActivity.this, "List is empty!", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            Toast.makeText(DeviceListActivity.this, COULD_NOT_RETRIEVE_LIST, Toast.LENGTH_LONG).show();
+                            Log.i(TAG, COULD_NOT_RETRIEVE_LIST + ": " + response.message());
+                        }
+                        mDialog.cancel();
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, e.getMessage(), e);
                     }
-                } else {
-                    Toast.makeText(DeviceListActivity.this, COULD_NOT_RETRIEVE_LIST, Toast.LENGTH_LONG).show();
-                    Log.i(TAG, COULD_NOT_RETRIEVE_LIST + ": " + response.message());
                 }
-                mDialog.cancel();
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<List<Device>> call, @NonNull Throwable t) {
-                mDialog.cancel();
-                Log.e(TAG, t.getMessage(), t);
-                Toast.makeText(DeviceListActivity.this, OPERATION_FAILED_CHECK_CONNECTION, Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<List<Device>> call, @NonNull Throwable t) {
+                    mDialog.cancel();
+                    Log.e(TAG, t.getMessage(), t);
+                    Toast.makeText(DeviceListActivity.this, OPERATION_FAILED_CHECK_CONNECTION, Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 
     @Override

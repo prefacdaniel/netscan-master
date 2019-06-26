@@ -50,77 +50,90 @@ public class AddDeviceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
+        try {
+            imageButton = findViewById(R.id.addImageButton);
+            deviceName = findViewById(R.id.deviceNameDaily);
+            ipField = findViewById(R.id.ipFieldAddDevice);
+            port = findViewById(R.id.portFieldAddDevice);
+            saveDevice = findViewById(R.id.saveDevice);
 
-        imageButton = findViewById(R.id.addImageButton);
-        deviceName = findViewById(R.id.deviceNameDaily);
-        ipField = findViewById(R.id.ipFieldAddDevice);
-        port = findViewById(R.id.portFieldAddDevice);
-        saveDevice = findViewById(R.id.saveDevice);
 
+            imageButton.setOnClickListener(view -> {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, PICK_PHOTO_FOR_AVATAR);
+            });
 
-        imageButton.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            startActivityForResult(intent, PICK_PHOTO_FOR_AVATAR);
-        });
-
-        saveDevice.setOnClickListener(v -> {
-            String deviceNameString = deviceName.getText().toString();
-            String ipFieldString = ipField.getText().toString();
-            String portNumberString = port.getText().toString();
-
-            if (deviceNameString.isEmpty() || ipFieldString.isEmpty() || portNumberString.isEmpty() || base64Image == null || base64Image.isEmpty()) {
-                Toast.makeText(getApplicationContext(), "All fields are mandatory!", Toast.LENGTH_LONG).show();
-            } else {
+            saveDevice.setOnClickListener(v -> {
                 try {
-                    int portNumber = Integer.parseInt(portNumberString);
+                    String deviceNameString = deviceName.getText().toString();
+                    String ipFieldString = ipField.getText().toString();
+                    String portNumberString = port.getText().toString();
 
-                    Device device = new Device();
-                    device.setIp(ipFieldString);
-                    device.setPort(portNumber);
-                    device.setName(deviceNameString);
-                    device.setStatus(DeviceStatus.DISCONNECTED);
-                    device.setImage(base64Image);
+                    if (deviceNameString.isEmpty() || ipFieldString.isEmpty() || portNumberString.isEmpty() || base64Image == null || base64Image.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), "All fields are mandatory!", Toast.LENGTH_LONG).show();
+                    } else {
+                        try {
+                            int portNumber = Integer.parseInt(portNumberString);
 
-                    sendDeviceToDatabase(device);
+                            Device device = new Device();
+                            device.setIp(ipFieldString);
+                            device.setPort(portNumber);
+                            device.setName(deviceNameString);
+                            device.setStatus(DeviceStatus.DISCONNECTED);
+                            device.setImage(base64Image);
+
+                            sendDeviceToDatabase(device);
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage(), e);
+                            Toast.makeText(getApplicationContext(), "Wrong input data!", Toast.LENGTH_LONG).show();
+                        }
+                    }
                 } catch (Exception e) {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, e.getMessage(), e);
-                    Toast.makeText(getApplicationContext(), "Wrong input data!", Toast.LENGTH_LONG).show();
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_PHOTO_FOR_AVATAR && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                Log.e(TAG, "Data for image is null!");
-            } else {
-                try {
-                    InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                    ByteArrayOutputStream result = new ByteArrayOutputStream();
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = inputStream.read(buffer)) != -1) {
-                        result.write(buffer, 0, length);
+        try {
+            if (requestCode == PICK_PHOTO_FOR_AVATAR && resultCode == Activity.RESULT_OK) {
+                if (data == null) {
+                    Log.e(TAG, "Data for image is null!");
+                } else {
+                    try {
+                        InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
+                        ByteArrayOutputStream result = new ByteArrayOutputStream();
+                        byte[] buffer = new byte[1024];
+                        int length;
+                        while ((length = inputStream.read(buffer)) != -1) {
+                            result.write(buffer, 0, length);
+                        }
+                        final byte[] imageData = result.toByteArray();
+                        base64Image = Base64.encodeToString(imageData, Base64.URL_SAFE);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                        imageButton.setImageBitmap(bitmap);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error while reading data!");
                     }
-                    final byte[] imageData = result.toByteArray();
-                    base64Image = Base64.encodeToString(imageData, Base64.URL_SAFE);
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-                    imageButton.setImageBitmap(bitmap);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error while reading data!");
                 }
             }
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, e.getMessage(), e);
         }
     }
 
     public void sendDeviceToDatabase(Device device) {
 
         try {
-
             ProgressDialog mDialog = new ProgressDialog(AddDeviceActivity.this);
             mDialog.setMessage("Please wait...");
             mDialog.setCancelable(false);
@@ -152,7 +165,5 @@ public class AddDeviceActivity extends AppCompatActivity {
             Toast.makeText(AddDeviceActivity.this, "Error occurred!", Toast.LENGTH_SHORT).show();
             Log.e(TAG, e.getMessage(), e);
         }
-
-
     }
 }
