@@ -11,7 +11,7 @@ database_path = 'C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\database\\
 def insert_feature_vectors(feature_vectors, instance_name):
     conn = sqlite3.connect(database_path)
     for feature in feature_vectors:
-        conn.executemany('INSERT INTO feature VALUES (NULL,?,?,?,?,?,?,?,?,?)',
+        conn.executemany('INSERT INTO feature VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                          [(feature.irtt,
                            feature.total_time,
                            feature.time_value_sin,
@@ -20,8 +20,35 @@ def insert_feature_vectors(feature_vectors, instance_name):
                            feature.ip_trust_level,
                            feature.client_ip,
                            feature.packet_number,
-                           instance_name
-                           )])  # //todo probably this muse be modified
+                           instance_name,
+                           feature.server_id,
+                           feature.date,
+                           feature.time,
+                           feature.country,
+                           feature.status
+                           )])
+    conn.commit()
+    conn.close()
+
+
+def insert_feature_vector(feature):
+    conn = sqlite3.connect(database_path)
+    conn.execute('INSERT INTO feature VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                 [feature.irtt,
+                  feature.total_time,
+                  feature.time_value_sin,
+                  feature.time_value_cos,
+                  feature.data_len,
+                  feature.ip_trust_level,
+                  feature.client_ip,
+                  feature.packet_number,
+                  feature.source,
+                  feature.server_id,
+                  feature.date,
+                  feature.time,
+                  feature.country,
+                  feature.status
+                  ])
     conn.commit()
     conn.close()
 
