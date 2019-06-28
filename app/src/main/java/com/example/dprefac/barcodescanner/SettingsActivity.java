@@ -7,7 +7,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.dprefac.barcodescanner.config.Configuration;
 import com.example.dprefac.barcodescanner.exception.IncompleteRequestException;
+import com.example.dprefac.barcodescanner.service.DeviceService;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.example.dprefac.barcodescanner.config.Configuration.SERVER_ADDRESS;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -30,7 +37,17 @@ public class SettingsActivity extends AppCompatActivity {
             if (address.isEmpty()) {
                 throw new IncompleteRequestException("Host field can't be empty!");
             }
-            MainActivity.HOST_URL = "http://" + address;
+
+            Configuration.SERVER_ADDRESS = "http://" + address; //info: add also :5000 port
+
+            Configuration.retrofit = new Retrofit.Builder()
+                    .baseUrl(SERVER_ADDRESS)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            Configuration.deviceService = Configuration.retrofit.create(DeviceService.class);
+            Toast.makeText(SettingsActivity.this, "New address: " + Configuration.SERVER_ADDRESS, Toast.LENGTH_LONG).show();
+
             finish();
         } catch (IncompleteRequestException e) {
             Toast.makeText(SettingsActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();

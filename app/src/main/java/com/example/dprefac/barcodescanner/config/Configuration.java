@@ -10,9 +10,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class Configuration {
-    public static String SERVER_ADDRESS = "http://192.168.167.82:5000";
+   public static String SERVER_ADDRESS = "http://192.168.43.28:5000";
 
-   private static Retrofit retrofit = new Retrofit.Builder()
+   public static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(SERVER_ADDRESS)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
