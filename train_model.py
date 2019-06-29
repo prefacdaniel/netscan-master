@@ -32,7 +32,7 @@ def load_and_prepare_test_data(feature_vectors, modified_columns):
     test_data = test_data[:, utilised_columns]  # extracting only necessary columns
     test_data = np.array(test_data).astype(np.float64)  # convert to numpy float
     for item in modified_columns:  # standardise data set
-        test_data[:, item[0]] = normalise_training_data_set(test_data[:, item[0]], item[1], item[2])
+        test_data[:, int(item[0])] = normalise_training_data_set(test_data[:, int(item[0])], float(item[1]), float(item[2]))
     return test_data
 
 
@@ -58,7 +58,9 @@ def new_training(model_id,
         pass  # todo
     elif algorithm_name == "random_forest":
         model = train_isolation_forest(training_data)
-        pickle.dump(model, open(file_path, 'wb'))
+        joblib.dump(model, file_path)
+
+        # pickle.dump(model, open(file_path, 'wb', ), protocol=0)
     # elif #todo throw exception
     training = Training(
         id="",
@@ -79,6 +81,18 @@ def new_training(model_id,
 def get_and_compile_training_model_by_id(training_id):
     training = db.get_training_by_id(training_id)
     model = joblib.load(training.model_body)
+    utilised_columns = training.utilised_columns.split(",")
+    modified_columns = []
+    for item in training.modified_columns.split("|"):
+        modified_columns.append(item.split(","))
+    return model, utilised_columns, modified_columns, training
+
+
+def get_and_load_training_model_by_id(training_id):
+    training = db.get_training_by_id(training_id)
+    with open(training.model_body, 'rb') as content_file:
+        model = content_file.read()
+    # model = model.decode()
     utilised_columns = training.utilised_columns.split(",")
     modified_columns = []
     for item in training.modified_columns.split("|"):
@@ -125,7 +139,6 @@ def evaluate_model(model, test_feature_vectors, training_data, modified_columns)
     print("FPF: ", FPF)
 
 
-
 def get_modified_columns_str(modified_columns):
     modified_columns_str = ""
     for modified_column in modified_columns:
@@ -161,11 +174,10 @@ def load_active_trainings():
 
 
 def evaluate_and_save_feature_status(model, test_feature_vectors, modified_columns):
-    #TODO NOT DONE YET !!
+    # TODO NOT DONE YET !!
     for feature_vector in test_feature_vectors:
         test_data = load_and_prepare_test_data(feature_vectors=(feature_vector), modified_columns=modified_columns)
     test_result = model.predict(test_data)
-
 
 # load_active_trainings()
 # model, utilised_columns, modified_columns, training = running_active_trainings['192.168.0.100:9999']

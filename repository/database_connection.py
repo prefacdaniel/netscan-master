@@ -165,6 +165,15 @@ def save_training_element(training_element):
     conn.close()
 
 
+def get_active_training_for_device(device_id, algorithm_id):
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT training_id FROM active_training WHERE algorithm_id = ? and server_id = ?",
+                   (algorithm_id, int(device_id)))
+    rows = cursor.fetchall()
+    return rows[0][0]
+
+
 def get_server_by_id(server_id):
     conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
@@ -271,5 +280,6 @@ def update_current_active_training(training_id, algorithm_id):
     cursor.execute(query, (training_id, algorithm_id))
     conn.commit()
     conn.close()
+
 
 print(query_db_get_json("SELECT * FROM feature"))

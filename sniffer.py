@@ -254,7 +254,6 @@ def capture_traffic_offline(packet):
     t.start()
 
 
-# todo: test if it's still working as it should
 def capture_live_traffic(bpf_filter="ip.dst == 192.168.43.28 and tcp.dstport == 5000"):
     offline_processing = False
     packet_exaction_thread.start()

@@ -1,14 +1,16 @@
 import json
 from collections import namedtuple
 
-from flask import Flask, Response, request
+from flask import Flask, Response, request, make_response
 
 from model.Server import Server
+from model.TrainingResponse import TrainingResponse
 from repository.database_connection import query_db_get_json, save_server, get_device_data_by_id, \
     get_connection_for_device_from_date_from_db, update_connection_status_in_db, insert_feature_vector, \
     select_all_normal_or_unknown_traffic_data_from_feature, select_all_normal_traffic_data_from_feature, \
-    update_current_active_training
-from train_model import new_training
+    update_current_active_training, get_active_training_for_device
+from service.Encode import MyEncoder
+from train_model import new_training, get_and_load_training_model_by_id
 
 app = Flask(__name__)
 
@@ -92,6 +94,28 @@ def add_feature():
     feature_vector = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
     insert_feature_vector(feature_vector)
     return Response(data, status=200)
+
+
+@app.route('/getactivetraining/<deviceid>', methods=['GET'])
+def get_active_training(deviceid):
+    active_training_id = get_active_training_for_device(device_id=deviceid, algorithm_id=3)
+    model, utilised_columns, modified_columns, training = get_and_load_training_model_by_id(active_training_id)
+    training_response = TrainingResponse(model="",
+                                         utilised_columns=utilised_columns,
+                                         modified_columns=modified_columns,
+                                         training=training)
+    return Response(MyEncoder().encode(training_response), status=200)
+
+
+@app.route('/getactivetrainingmodel/<deviceid>', methods=['GET'])
+def get_active_training_model(deviceid):
+    active_training_id = get_active_training_for_device(device_id=deviceid, algorithm_id=3)
+    model, utilised_columns, modified_columns, training = get_and_load_training_model_by_id(active_training_id)
+    response = make_response(model)
+    response.headers.set('Content-Type', 'application/octet-stream')
+    response.headers.set(
+        'Content-Disposition', 'attachment', filename='mdl')
+    return response
 
 
 if __name__ == '__main__':
