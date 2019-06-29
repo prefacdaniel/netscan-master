@@ -5,7 +5,10 @@ from flask import Flask, Response, request
 
 from model.Server import Server
 from repository.database_connection import query_db_get_json, save_server, get_device_data_by_id, \
-    get_connection_for_device_from_date_from_db, update_connection_status_in_db, insert_feature_vector
+    get_connection_for_device_from_date_from_db, update_connection_status_in_db, insert_feature_vector, \
+    select_all_normal_or_unknown_traffic_data_from_feature, select_all_normal_traffic_data_from_feature, \
+    update_current_active_training
+from train_model import new_training
 
 app = Flask(__name__)
 
@@ -63,13 +66,31 @@ def update_connection_status():
     return Response(updated_connections_number, status=200, mimetype='application/json')
 
 
+@app.route('/startnewtraining', methods=['POST'])
+def start_new_training():
+    data = request.data
+    data = json.loads(data)
+    if data['use_unknown_status_data']:
+        training_data = select_all_normal_or_unknown_traffic_data_from_feature()
+    else:
+        training_data = select_all_normal_traffic_data_from_feature()
+
+    model, training_id, modified_columns, training_data = new_training(model_id="3",
+                                                                       training_feature_vectors=training_data,
+                                                                       utilised_columns=[1, 2, 3, 4, 5, 6, 8],
+                                                                       columns_to_standardise=[0, 1, 4, 6])
+    update_current_active_training(training_id=training_id, algorithm_id=3)
+    return Response(status=200)
+
+
+######################python client#########
+
 @app.route('/addfeature', methods=['POST'])
 def add_feature():
     data = request.data
     data = json.loads(data)
     feature_vector = json.loads(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
     insert_feature_vector(feature_vector)
-    print(data)
     return Response(data, status=200)
 
 

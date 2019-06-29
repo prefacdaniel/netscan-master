@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 from sklearn.externals import joblib
 from model.Training import Training
@@ -56,7 +58,7 @@ def new_training(model_id,
         pass  # todo
     elif algorithm_name == "random_forest":
         model = train_isolation_forest(training_data)
-        joblib.dump(model, file_path)
+        pickle.dump(model, open(file_path, 'wb'))
     # elif #todo throw exception
     training = Training(
         id="",
@@ -172,16 +174,16 @@ def evaluate_and_save_feature_status(model, test_feature_vectors, modified_colum
 #                                  modified_columns=modified_columns)
 
 
-load_active_trainings()
-
-get_and_compile_training_model_by_id("35")
-
-model, training_id, modified_columns, training_data = new_training(model_id="3",
-                                                                   training_feature_vectors=training_feature_vectors,
-                                                                   utilised_columns=utilised_columns,
-                                                                   columns_to_standardise=columns_to_standardise)
-
-evaluate_model(model, test_feature_vectors, training_data, modified_columns)
+# load_active_trainings()
+#
+# get_and_compile_training_model_by_id("35")
+#
+# model, training_id, modified_columns, training_data = new_training(model_id="3",
+#                                                                    training_feature_vectors=training_feature_vectors,
+#                                                                    utilised_columns=utilised_columns,
+#                                                                    columns_to_standardise=columns_to_standardise)
+#
+# evaluate_model(model, test_feature_vectors, training_data, modified_columns)
 
 # Y = np.zeros(len(training_data))
 # np.random.seed(7)

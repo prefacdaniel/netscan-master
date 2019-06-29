@@ -74,6 +74,22 @@ def select_all_data_from_feature(source_name):
     return rows
 
 
+def select_all_normal_traffic_data_from_feature():
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM feature where status = 'NORMAL'")
+    rows = cursor.fetchall()
+    return rows
+
+
+def select_all_normal_or_unknown_traffic_data_from_feature():
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM feature where status = 'NORMAL' OR status = 'INCERT'")
+    rows = cursor.fetchall()
+    return rows
+
+
 def get_model_by_id(model_id):
     conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
@@ -245,5 +261,15 @@ def update_connection_status_in_db(data):
     conn.commit()
     conn.close()
 
+
+def update_current_active_training(training_id, algorithm_id):
+    query = "UPDATE active_training " \
+            "   SET training_id = ? " \
+            " WHERE algorithm_id = ?;"
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute(query, (training_id, algorithm_id))
+    conn.commit()
+    conn.close()
 
 print(query_db_get_json("SELECT * FROM feature"))
