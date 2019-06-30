@@ -22,3 +22,11 @@ def get_request_by_id(path):
     return r.content
 
 
+def get_training_for_device(device_id):
+    path = "/getactivetraining/" + str(device_id)
+    return get_request_by_id(path)
+
+
+def get_training_model_for_device(device_id):
+    path = "/getactivetrainingmodel/" + str(device_id)
+    return get_request_by_id(path)

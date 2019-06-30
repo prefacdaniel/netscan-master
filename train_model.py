@@ -32,7 +32,8 @@ def load_and_prepare_test_data(feature_vectors, modified_columns):
     test_data = test_data[:, utilised_columns]  # extracting only necessary columns
     test_data = np.array(test_data).astype(np.float64)  # convert to numpy float
     for item in modified_columns:  # standardise data set
-        test_data[:, int(item[0])] = normalise_training_data_set(test_data[:, int(item[0])], float(item[1]), float(item[2]))
+        test_data[:, int(item[0])] = normalise_training_data_set(test_data[:, int(item[0])], float(item[1]),
+                                                                 float(item[2]))
     return test_data
 
 

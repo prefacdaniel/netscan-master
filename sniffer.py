@@ -8,7 +8,9 @@ import geoip2.database
 from model.Feature import FeatureVector
 from model.packet import Packet
 from model.stream import StreamPacket
+from service.OnlineService import load_training_and_model_by_device
 from service.rest_service import post_request
+from train_model import load_and_prepare_test_data
 from utils.utils import get_current_time_millis, get_hour_minute, get_date
 
 reader = geoip2.database.Reader('C:\\Users\\dprefac\\Downloads\\GeoLite2-Country.mmdb')
@@ -26,6 +28,11 @@ offline_processing = True
 # for packet in capture.sniff_continuously(packet_count=5):
 #     print(packet)
 #
+
+device_id = 1  # todo extract to property file
+active_training = None
+model = None
+active_training, model = load_training_and_model_by_device(device_id)
 
 packet_queue = queue.Queue()
 stream_queue = queue.Queue()
@@ -94,23 +101,37 @@ def extract_feature(stream):
             data_len = calculate_size(
                 stream.packet_list)  # todo send also serve ip from packet in order not to use global variable anymore
             ip_trust_level, country = extract_ip_trust_feature(stream.packet_list[0].source_ip)
-            feature_vector = FeatureVector(irtt=irtt,
-                                           total_time=total_time,
-                                           time_value_sin=time_value_sin,
-                                           time_value_cos=time_value_cos,
-                                           data_len=data_len,
-                                           ip_trust_level=ip_trust_level,
-                                           packet_number=len(stream.packet_list),
-                                           source="",  # todo make this dinamic
-                                           client_ip=stream.packet_list[0].source_ip,
-                                           server_ip=stream.packet_list[0].destination_ip,
-                                           server_port=stream.server_port,
-                                           server_id=1,  # todo make this dinamic
-                                           date=get_date(),
-                                           time=get_hour_minute(),
-                                           country=country.lower(),
-                                           status="INCERT"
-                                           )
+
+            feature_vector = FeatureVector(
+                id=None,
+                irtt=irtt,
+                total_time=total_time,
+                time_value_sin=time_value_sin,
+                time_value_cos=time_value_cos,
+                data_len=data_len,
+                ip_trust_level=ip_trust_level,
+                client_ip=stream.packet_list[0].source_ip,
+                packet_number=len(stream.packet_list),
+                source="",  # todo make this dinamic
+                server_ip=stream.packet_list[0].destination_ip,
+                server_port=stream.server_port,
+                server_id=device_id,
+                date=get_date(),
+                time=get_hour_minute(),
+                country=country.lower(),
+                status="INCERT"
+            )
+            if active_training is not None:
+                test_data = load_and_prepare_test_data(feature_vectors=
+                                                       [[feature_vector.__dict__[o] for o in feature_vector.__dict__]],
+                                                       modified_columns=active_training.modified_columns)
+                y_pred_test = model.predict(test_data)
+                if y_pred_test[0].astype(int) == 1:
+                    feature_vector.status = "NORMAL"
+                    print("normal")
+                elif y_pred_test[0].astype(int) == -1:
+                    feature_vector.status = "ATTACK"
+                    print("attack")
 
             feature_vectors.append(feature_vector)
             print(feature_vector.irtt,
