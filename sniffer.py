@@ -15,8 +15,8 @@ from utils.utils import get_current_time_millis, get_hour_minute, get_date
 
 reader = geoip2.database.Reader('C:\\Users\\dprefac\\Downloads\\GeoLite2-Country.mmdb')
 
-server_ip = "192.168.43.28"
-server_port = "5000"
+server_ip = "192.168.0.100"
+server_port = "9999"
 
 offline_processing = True
 # cap = pyshark.FileCapture('C:\\Users\\dprefac\\PycharmProjects\\KMeans\\wiresharkScans\\tryaspcap.cap')
@@ -276,7 +276,6 @@ def capture_traffic_offline(packet):
 
 
 def capture_live_traffic(bpf_filter="ip.dst == 192.168.43.28 and tcp.dstport == 5000"):
-    offline_processing = False
     packet_exaction_thread.start()
     stream_exaction_thread.start()
     capture = pyshark.LiveCapture(bpf_filter=bpf_filter)
@@ -286,14 +285,10 @@ def capture_live_traffic(bpf_filter="ip.dst == 192.168.43.28 and tcp.dstport == 
 
 
 def capture_traffic_from_file(file_path):
-    offline_processing = True
     capture = pyshark.FileCapture(input_file=file_path, display_filter="tcp")
     start_time = get_current_time_millis()
     print(0, "Start extracting data from file...")
-    a = 0
     for packet in capture:
-        print(a)
-        a = a + 1
         capture_traffic_offline(packet)
     # capture.apply_on_packets(capture_traffic_offline)
     print((get_current_time_millis() - start_time) / 60000, "Start extracting packets from queue...")
@@ -303,6 +298,6 @@ def capture_traffic_from_file(file_path):
     return feature_vectors
 
 
-capture_live_traffic(bpf_filter="dst host 192.168.43.28 and dst port 5000")
-# capture_traffic_from_file(
-#     file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\pythonScript_1000_vpn_telekom_valid.pcapng")
+# capture_live_traffic(bpf_filter="dst host 192.168.43.28 and dst port 5000")
+capture_traffic_from_file(
+    file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\hydra_1000_vpn_rusia1.pcapng")
