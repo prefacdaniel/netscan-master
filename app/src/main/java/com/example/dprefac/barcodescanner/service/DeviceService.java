@@ -3,6 +3,7 @@ package com.example.dprefac.barcodescanner.service;
 import com.example.dprefac.barcodescanner.model.DateElement;
 import com.example.dprefac.barcodescanner.model.Device;
 import com.example.dprefac.barcodescanner.model.RecordedConnection;
+import com.example.dprefac.barcodescanner.model.TrainingRequest;
 
 import java.util.List;
 
@@ -32,4 +33,7 @@ public interface DeviceService {
 
     @POST("/statusupdate")
     Call<Void> updateConnectionStatus(@Body List<RecordedConnection> recordedConnectionList);
+
+    @POST("/startnewtraining")
+    Call<Void> startNewTraining(@Body TrainingRequest trainingRequest);
 }

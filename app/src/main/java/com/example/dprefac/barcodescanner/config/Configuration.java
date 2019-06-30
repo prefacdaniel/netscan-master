@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Configuration {
    public static String SERVER_ADDRESS = "http://192.168.43.28:5000";
+//   public static String SERVER_ADDRESS = "http://192.168.0.101:5000";
 
    public static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(SERVER_ADDRESS)
