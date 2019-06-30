@@ -13,7 +13,7 @@ from service.rest_service import post_request
 from train_model import load_and_prepare_test_data
 from utils.utils import get_current_time_millis, get_hour_minute, get_date
 
-reader = geoip2.database.Reader('C:\\Users\\dprefac\\Downloads\\GeoLite2-Country.mmdb')
+reader = geoip2.database.Reader('GeoLite2-Country.mmdb')
 
 server_ip = "192.168.0.100"
 server_port = "9999"
@@ -76,8 +76,7 @@ def extract_time_feature(packet):
     hour = date_time.hour
     minute = date_time.minute
     total_minute_in_a_day = 1440
-    radians = (((12 + hour) * 60 + minute) / total_minute_in_a_day) * (
-            2 * math.pi)  # todo what is 12+ for in 12+hour ?!
+    radians = ((hour * 60 + minute) / total_minute_in_a_day) * (2 * math.pi)
     time_value_sin = math.sin(radians)
     time_value_cos = math.cos(radians)
     return time_value_sin, time_value_cos
@@ -298,6 +297,6 @@ def capture_traffic_from_file(file_path):
     return feature_vectors
 
 
-# capture_live_traffic(bpf_filter="dst host 192.168.43.28 and dst port 5000")
-capture_traffic_from_file(
-    file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\hydra_1000_vpn_rusia1.pcapng")
+capture_live_traffic(bpf_filter="dst host 192.168.43.28 and dst port 5000")
+# capture_traffic_from_file(
+#     file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\hydra_1000_vpn_rusia1.pcapng")

@@ -53,16 +53,12 @@ def new_training(model_id,
 
     date = str(get_current_time_millis())
     file_path = "trained_models/model" + date[-9:] + ".pkl"
-    if algorithm_name == "ann":
-        pass  # todo
-    elif algorithm_name == "kmeans":
-        pass  # todo
-    elif algorithm_name == "random_forest":
+    if algorithm_name == "random_forest":
         model = train_isolation_forest(training_data)
         joblib.dump(model, file_path)
 
         # pickle.dump(model, open(file_path, 'wb', ), protocol=0)
-    # elif #todo throw exception
+
     training = Training(
         id="",
         date=date,
@@ -174,11 +170,11 @@ def load_active_trainings():
         print("done")
 
 
-def evaluate_and_save_feature_status(model, test_feature_vectors, modified_columns):
-    # TODO NOT DONE YET !!
-    for feature_vector in test_feature_vectors:
-        test_data = load_and_prepare_test_data(feature_vectors=(feature_vector), modified_columns=modified_columns)
-    test_result = model.predict(test_data)
+# def evaluate_and_save_feature_status(model, test_feature_vectors, modified_columns):
+
+    # for feature_vector in test_feature_vectors:
+    #     test_data = load_and_prepare_test_data(feature_vectors=(feature_vector), modified_columns=modified_columns)
+    # test_result = model.predict(test_data)
 
 # load_active_trainings()
 # model, utilised_columns, modified_columns, training = running_active_trainings['192.168.0.100:9999']

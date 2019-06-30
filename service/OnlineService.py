@@ -5,7 +5,7 @@ from sklearn.externals import joblib
 
 from repository.database_connection import select_all_data_from_feature
 from service.rest_service import get_request_by_id, get_training_for_device, get_training_model_for_device
-from train_model import evaluate_and_save_feature_status, load_and_prepare_test_data
+from train_model import  load_and_prepare_test_data
 
 
 def load_training_and_model_by_device(device_id):
