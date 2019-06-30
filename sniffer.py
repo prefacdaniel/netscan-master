@@ -297,6 +297,6 @@ def capture_traffic_from_file(file_path):
     return feature_vectors
 
 
-capture_live_traffic(bpf_filter="dst host 192.168.43.28 and dst port 5000")
+capture_live_traffic(bpf_filter="dst host 192.168.0.100 and dst port 9999")
 # capture_traffic_from_file(
 #     file_path="C:\\Users\\dprefac\\PycharmProjects\\netscan-master\\wiresharkScans\\home_test\\hydra_1000_vpn_rusia1.pcapng")

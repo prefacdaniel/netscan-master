@@ -3,7 +3,7 @@ import urllib.request
 
 from service.Encode import MyEncoder
 
-cloud_server = "http://192.168.43.28:5000"
+cloud_server = "http://192.168.0.101:5000"
 cloud_port = 5000
 
 
