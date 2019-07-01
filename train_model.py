@@ -11,8 +11,8 @@ from utils.utils import get_current_time_millis
 
 utilised_columns = [1, 2, 3, 4, 5, 6, 8]
 columns_to_standardise = [0, 1, 4, 6]
-training_feature_vectors = db.select_all_data_from_feature("pythonScript_1000_vpn_telekom_valid.pcapng")
-test_feature_vectors = db.select_all_data_from_feature("hydra_1000_vpn_rusia1.pcapng")
+# training_feature_vectors = db.select_all_data_from_feature("pythonScript_1000_vpn_telekom_valid.pcapng")
+# test_feature_vectors = db.select_all_data_from_feature("hydra_1000_vpn_rusia1.pcapng")
 
 
 def load_and_prepare_training_data(feature_vectors, utilised_columns, columns_to_standardise):
